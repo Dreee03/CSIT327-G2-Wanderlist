@@ -4,6 +4,9 @@ from django.contrib import messages
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_protect
 from wanderlist.supabase_client import supabase
+from django.conf import settings
+from uuid import uuid4
+import os
 
 
 def destination_list(request):
@@ -44,7 +47,22 @@ def create_destination(request):
     # Get the current user's ID
     custom_user_id = request.session.get('custom_user_id')
 
+    # Allow either a direct URL or an uploaded file
     destination_image = (request.POST.get('destination_image') or '').strip()
+    upload_file = request.FILES.get('destination_image')
+    # If a file was uploaded, push it to Supabase Storage and build public URL
+    if upload_file:
+        try:
+            # create a unique path inside the bucket
+            filename = os.path.basename(upload_file.name)
+            file_path = f"{custom_user_id}/{uuid4().hex}_{filename}"
+            # upload expects a file-like object; UploadedFile.file works
+            supabase.storage.from_('DestinationImages').upload(file_path, upload_file.file)
+            # Build public URL for the uploaded file (bucket must be public)
+            destination_image = f"{settings.SUPABASE_URL}/storage/v1/object/public/DestinationImages/{file_path}"
+        except Exception as e:
+            messages.error(request, f'❌ Could not upload image: {e}')
+            return redirect('destination:add_destination')
     name = (request.POST.get('name') or '').strip()
     city = (request.POST.get('city') or '').strip()
     country = (request.POST.get('country') or '').strip()
@@ -104,6 +122,16 @@ def edit_destination(request, destination_id):
     # ✅ Handle update
     if request.method == 'POST':
         destination_image = (request.POST.get('destination_image') or '').strip()
+        upload_file = request.FILES.get('destination_image')
+        if upload_file:
+            try:
+                filename = os.path.basename(upload_file.name)
+                file_path = f"{custom_user_id}/{uuid4().hex}_{filename}"
+                supabase.storage.from_('DestinationImages').upload(file_path, upload_file.file)
+                destination_image = f"{settings.SUPABASE_URL}/storage/v1/object/public/DestinationImages/{file_path}"
+            except Exception as e:
+                messages.error(request, f'❌ Could not upload image: {e}')
+                return render(request, 'edit_destination.html', {'destination': destination})
         name = (request.POST.get('name') or '').strip()
         city = (request.POST.get('city') or '').strip()
         country = (request.POST.get('country') or '').strip()

@@ -4,6 +4,9 @@ from .models import UserProfile
 from .forms import ProfileForm
 from wanderlist.supabase_client import supabase
 from django.contrib import messages
+from django.conf import settings
+from uuid import uuid4
+import os
 import json
 
 
@@ -120,6 +123,16 @@ def add_destination(request):
 
     if request.method == "POST":
         destination_image = (request.POST.get("destination_image") or "").strip()
+        upload_file = request.FILES.get('destination_image')
+        if upload_file:
+            try:
+                filename = os.path.basename(upload_file.name)
+                file_path = f"{custom_user_id}/{uuid4().hex}_{filename}"
+                supabase.storage.from_('DestinationImages').upload(file_path, upload_file.file)
+                destination_image = f"{settings.SUPABASE_URL}/storage/v1/object/public/DestinationImages/{file_path}"
+            except Exception as e:
+                messages.error(request, f"❌ Could not upload image: {e}")
+                return redirect('dashboard')
         name = request.POST.get("name")
         city = request.POST.get("city")
         country = request.POST.get("country")
@@ -174,6 +187,16 @@ def edit_destination(request, destination_id):
 
     if request.method == 'POST':
         destination_image = (request.POST.get('destination_image') or '').strip()
+        upload_file = request.FILES.get('destination_image')
+        if upload_file:
+            try:
+                filename = os.path.basename(upload_file.name)
+                file_path = f"{custom_user_id}/{uuid4().hex}_{filename}"
+                supabase.storage.from_('DestinationImages').upload(file_path, upload_file.file)
+                destination_image = f"{settings.SUPABASE_URL}/storage/v1/object/public/DestinationImages/{file_path}"
+            except Exception as e:
+                messages.error(request, f'❌ Could not upload image: {e}')
+                return render(request, 'edit_destination.html', {'destination': destination})
         name = request.POST.get('name')
         city = request.POST.get('city')
         country = request.POST.get('country')
