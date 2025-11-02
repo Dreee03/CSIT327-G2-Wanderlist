@@ -40,9 +40,9 @@
         {% csrf_token %}
         
         <div class="form-group">
-          <label for="destination_image">Destination Image (upload or URL - optional):</label>
-          <input type="file" id="destination_image" name="destination_image" accept="image/*">
-          <small>Or enter an image URL:</small>
+          <!--<label for="destination_image">Destination Image (upload or URL - optional):</label>
+          <input type="file" id="destination_image" name="destination_image" accept="image/*">-->
+          <small>Enter an external image URL:</small>
           <input type="url" id="destination_image_url" name="destination_image" value="{{ destination.destination_image }}" placeholder="Enter image URL">
         </div>
 
