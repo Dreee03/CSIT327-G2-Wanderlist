@@ -37,13 +37,12 @@
       {% endfor %}
     </div>
     {% endif %}
-<<<<<<< HEAD
 
     <form action="{% url 'destination:create' %}" method="POST" enctype="multipart/form-data">
       {% csrf_token %}
 
       <label for="destination_image">Destination Image (upload or URL - optional):</label>
-      <input type="file" id="destination_image" name="destination_image" accept="image/*">
+      <input type="file" id="destination_image" name="destination_image" accept="image/png, image/jpeg, image/webp" style="margin-bottom: 20px;">
       <small>Or enter an image URL:</small>
       <input type="url" id="destination_image_url" name="destination_image" value="{{ destination.destination_image }}" placeholder="Enter image URL">
 
@@ -55,6 +54,20 @@
 
       <label for="country">Country:</label>
       <input type="text" id="country" name="country" required>
+
+      <label>Click on the map to set coordinates:</label>
+      <div id="picker-map"></div>
+      
+      <div class="form-grid">
+        <div>
+          <label for="latitude">Latitude:</label>
+          <input type="number" step="any" id="latitude" name="latitude" placeholder="Click map to select" readonly>
+        </div>
+        <div>
+          <label for="longitude">Longitude:</label>
+          <input type="number" step="any" id="longitude" name="longitude" placeholder="Click map to select" readonly>
+        </div>
+      </div>
 
       <!-- ✅ Category Dropdown -->
       <label for="category">Category:</label>
@@ -71,59 +84,6 @@
       <!-- ✅ New Notes / Journal Entry Field -->
       <label for="notes">Notes / Journal Entry (optional):</label>
       <textarea id="notes" name="notes" rows="4" placeholder="Write your travel notes or journal entry here..."></textarea>
-=======
-    
-    <form action="{% url 'destination:create' %}" method="POST" enctype="multipart/form-data">
-      {% csrf_token %}
-      
-      <label for="name">Name:</label>
-      <input type="text" id="name" name="name" required>
-    
-      <div class="form-grid">
-        <div>
-          <label for="city">City:</label>
-          <input type="text" id="city" name="city" required>
-        </div>
-        <div>
-          <label for="country">Country:</label>
-          <input type="text" id="country" name="country" required>
-        </div>
-      </div>
-
-      <label>Click on the map to set coordinates:</label>
-      <div id="picker-map"></div>
-      
-      <div class="form-grid">
-        <div>
-          <label for="latitude">Latitude:</label>
-          <input type="number" step="any" id="latitude" name="latitude" placeholder="Click map to select" readonly>
-        </div>
-        <div>
-          <label for="longitude">Longitude:</label>
-          <input type="number" step="any" id="longitude" name="longitude" placeholder="Click map to select" readonly>
-        </div>
-      </div>
-    
-      <label for="category">Category:</label>
-      <select id="category" name="category" required>
-        <option value="">Select a category</option>
-        <option value="Dreaming">Dreaming</option>
-        <option value="Planned">Planned</option>
-        <option value="Visited">Visited</option>
-      </select>
-    
-      <label for="description">Description:</label>
-      <textarea id="description" name="description" rows="4" minlength="0" maxlength="500"></textarea>
-
-      <label for="image">Destination Photo:</label>
-      <input type="file" id="image" name="image" accept="image/png, image/jpeg, image/webp" style="margin-bottom: 20px;">
-    
-      <div class="button-container">
-        <button type="submit" class="btn-save">Save</button>
-        <a href="{% url 'destination:list' %}" class="btn-cancel">Cancel</a>
-      </div>
-    </form>
->>>>>>> 74af7ebeecfbf5bdbc34dfa069def25e5bb2869b
 
       <div class="button-container">
         <button type="submit" class="btn-save">Save</button>

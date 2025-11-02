@@ -1,12 +1,10 @@
 from django.shortcuts import render, redirect
 from accounts.forms import SupabaseUser
+import destination
 from .models import UserProfile
 from .forms import ProfileForm
 from wanderlist.supabase_client import supabase
 from django.contrib import messages
-from django.conf import settings
-from uuid import uuid4
-import os
 import json
 
 
@@ -24,8 +22,8 @@ def dashboard_view(request):
     query = request.GET.get('q', '').strip()
     category = request.GET.get('category', '').strip()
 
-    response = supabase.table("destination").select("*").execute()
-    destination = response.data if response.data else []
+    response = supabase.table("destination").select("*").eq("user_id", custom_user_id).execute()
+    destinations = response.data if response.data else []
 
     if query:
         destinations = [
@@ -145,131 +143,15 @@ def profile_view(request):
 
 # These functions are unchanged from your file
 def add_destination(request):
-    """Add a new destination to Supabase."""
-    if 'supabase_access_token' not in request.session:
-        return redirect('login')
-
-    # Get the current user's ID
-    custom_user_id = request.session.get('custom_user_id')
-
-    if request.method == "POST":
-        destination_image = (request.POST.get("destination_image") or "").strip()
-        upload_file = request.FILES.get('destination_image')
-        if upload_file:
-            try:
-                filename = os.path.basename(upload_file.name)
-                file_path = f"{custom_user_id}/{uuid4().hex}_{filename}"
-                supabase.storage.from_('DestinationImages').upload(file_path, upload_file.file)
-                destination_image = f"{settings.SUPABASE_URL}/storage/v1/object/public/DestinationImages/{file_path}"
-            except Exception as e:
-                messages.error(request, f"❌ Could not upload image: {e}")
-                return redirect('dashboard')
-        name = request.POST.get("name")
-        city = request.POST.get("city")
-        country = request.POST.get("country")
-        latitude = request.POST.get("latitude")
-        longitude = request.POST.get("longitude")
-        description = request.POST.get("description")
-        category = request.POST.get("category", "")
-        notes = request.POST.get("notes", "")
-
-        data = {
-            "destination_image": destination_image or None,  # Save null if empty
-            "name": name,
-            "city": city,
-            "country": country,
-            "latitude": float(latitude) if latitude else None,
-            "longitude": float(longitude) if longitude else None,
-            "description": description,
-            "category": category,
-            "notes": notes,
-            "user_id": custom_user_id  # Add the user_id to the destination
-        }
-        try:
-            supabase.table("destination").insert(data).execute()
-            messages.success(request, "✅ Destination added successfully!")
-        except Exception as e:
-            messages.error(request, f"❌ Could not add destination: {e}")
-
-        return redirect("dashboard")
-
-    return render(request, "add_destination.html")
+    destination.views.add_destination(request)
+    return redirect("dashboard")
 
 
 def edit_destination(request, destination_id):
-    """Fetch and update a destination from Supabase."""
-    if 'supabase_access_token' not in request.session:
-        return redirect('login')
-
-    # Get the current user's ID
-    custom_user_id = request.session.get('custom_user_id')
-
-    try:
-        result = supabase.table('destination').select('*').eq('destinationID', destination_id).eq('user_id', custom_user_id).execute()
-        destination = result.data[0] if result.data else None
-
-        if not destination:
-            messages.error(request, 'Destination not found.')
-            return redirect('dashboard')
-    except Exception as e:
-        messages.error(request, f'Error loading destination: {e}')
-        return redirect('dashboard')
-
-    if request.method == 'POST':
-        destination_image = (request.POST.get('destination_image') or '').strip()
-        upload_file = request.FILES.get('destination_image')
-        if upload_file:
-            try:
-                filename = os.path.basename(upload_file.name)
-                file_path = f"{custom_user_id}/{uuid4().hex}_{filename}"
-                supabase.storage.from_('DestinationImages').upload(file_path, upload_file.file)
-                destination_image = f"{settings.SUPABASE_URL}/storage/v1/object/public/DestinationImages/{file_path}"
-            except Exception as e:
-                messages.error(request, f'❌ Could not upload image: {e}')
-                return render(request, 'edit_destination.html', {'destination': destination})
-        name = request.POST.get('name')
-        city = request.POST.get('city')
-        country = request.POST.get('country')
-        description = request.POST.get('description')
-        category = request.POST.get('category')
-        notes = request.POST.get('notes', '')  # ✅ Handle notes in edit form
-
-        if not name or not city or not country:
-            messages.error(request, "Please fill out all required fields.")
-            return render(request, 'edit_destination.html', {'destination': destination})
-
-        payload = {
-            'destination_image': destination_image or None,  # ✅ Update image too
-            'name': name,
-            'city': city,
-            'country': country,
-            'category': category,
-            'description': description,
-            'notes': notes,  # ✅ Save updated notes
-        }
-
-        try:
-            supabase.table('destination').update(payload).eq('destinationID', destination_id).eq('user_id', custom_user_id).execute()
-            messages.success(request, '✅ Destination updated successfully!')
-            return redirect('dashboard')
-        except Exception as e:
-            messages.error(request, f'❌ Could not update destination: {e}')
-
-    return render(request, 'edit_destination.html', {'destination': destination})
+    destination.views.edit_destination(request, destination_id)
+    return redirect("dashboard")
 
 
 def delete_destination(request, destination_id):
-    """Delete a destination with confirmation."""
-    if 'supabase_access_token' not in request.session:
-        return redirect('login')
-
-    # Get the current user's ID
-    custom_user_id = request.session.get('custom_user_id')
-    if request.method == "POST":
-        try:
-            supabase.table("destination").delete().eq("destinationID", destination_id).eq('user_id', custom_user_id).execute()
-            messages.success(request, "🗑️ Destination deleted successfully!")
-        except Exception as e:
-            messages.error(request, f"❌ Could not delete destination: {e}")
-    
+    destination.views.delete_destination(request, destination_id)
     return redirect("dashboard")
