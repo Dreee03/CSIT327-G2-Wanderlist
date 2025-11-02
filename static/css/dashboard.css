@@ -124,15 +124,58 @@ main.main-content {
 }
 
 .filters .filter-btn {
-  padding: 6px 16px;
-  font-size: 0.85rem;
-  font-weight: 500;
+  padding: 8px 18px;
+  font-size: 0.9rem;
+  font-weight: 600;
   border-radius: 999px;
   border: none;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
   text-align: center;
   color: #fff;
+}
+
+
+/* Button Colors by Data Attribute */
+.filters .filter-btn[data-filter="all"] {
+  background: #2563EB; /* Blue */
+}
+.filters .filter-btn[data-filter="all"]:hover {
+  background: #1D4ED8;
+}
+
+.filters .filter-btn[data-filter="planned"] {
+  background: #FBBF24; /* Amber */
+  color: #78350F;
+}
+.filters .filter-btn[data-filter="planned"]:hover {
+  background: #F59E0B;
+  color: #fff;
+}
+
+.filters .filter-btn[data-filter="visited"] {
+  background: #10B981; /* Green */
+  color: #064E3B;
+}
+.filters .filter-btn[data-filter="visited"]:hover {
+  background: #059669;
+  color: #fff;
+}
+
+.filters .filter-btn[data-filter="dreaming"] {
+  background: #8B5CF6; /* Purple */
+  color: #312E81;
+}
+.filters .filter-btn[data-filter="dreaming"]:hover {
+  background: #7C3AED;
+  color: #fff;
+}
+
+/* Active Button State */
+.filters .filter-btn.active {
+  outline: 3px solid rgba(0, 0, 0, 0.15);
+  transform: scale(1.05);
+  box-shadow: 0 0 8px rgba(0,0,0,0.2);
 }
 
 .filters .btn-all { background: var(--wl-primary); }
@@ -143,6 +186,7 @@ main.main-content {
 .filters .btn-visited:hover { background: var(--wl-deep); color: #fff; }
 .filters .btn-dreaming { background: var(--wl-sky); color: var(--wl-text); }
 .filters .btn-dreaming:hover { background: var(--wl-blue); color: #fff; }
+
 
 /* ================================================
    DESTINATION CARDS
@@ -260,4 +304,10 @@ main.main-content {
   .destination-card { width: 160px; min-height: 200px; }
   .destination-card img.card-img,
   .no-image { height: 90px; }
+}
+/* Highlight active filter button */
+.filters .filter-btn.active {
+  outline: 2px solid #111827;
+  transform: scale(1.05);
+  box-shadow: 0 0 0 3px rgba(0,0,0,0.1);
 }

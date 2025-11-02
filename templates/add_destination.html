@@ -29,6 +29,7 @@
 <body>
   <div class="form-container">
     <h1>Add a New Destination</h1>
+
     {% if messages %}
     <div>
       {% for message in messages %}
@@ -36,6 +37,41 @@
       {% endfor %}
     </div>
     {% endif %}
+<<<<<<< HEAD
+
+    <form action="{% url 'destination:create' %}" method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <label for="destination_image">Destination Image (upload or URL - optional):</label>
+      <input type="file" id="destination_image" name="destination_image" accept="image/*">
+      <small>Or enter an image URL:</small>
+      <input type="url" id="destination_image_url" name="destination_image" value="{{ destination.destination_image }}" placeholder="Enter image URL">
+
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" required>
+
+      <label for="city">City:</label>
+      <input type="text" id="city" name="city" required>
+
+      <label for="country">Country:</label>
+      <input type="text" id="country" name="country" required>
+
+      <!-- ✅ Category Dropdown -->
+      <label for="category">Category:</label>
+      <select id="category" name="category" required>
+        <option value="">Select a category</option>
+        <option value="Dreaming">Dreaming</option>
+        <option value="Planned">Planned</option>
+        <option value="Visited">Visited</option>
+      </select>
+
+      <label for="description">Description:</label>
+      <textarea id="description" name="description" rows="4" maxlength="500"></textarea>
+
+      <!-- ✅ New Notes / Journal Entry Field -->
+      <label for="notes">Notes / Journal Entry (optional):</label>
+      <textarea id="notes" name="notes" rows="4" placeholder="Write your travel notes or journal entry here..."></textarea>
+=======
     
     <form action="{% url 'destination:create' %}" method="POST" enctype="multipart/form-data">
       {% csrf_token %}
@@ -87,7 +123,13 @@
         <a href="{% url 'destination:list' %}" class="btn-cancel">Cancel</a>
       </div>
     </form>
+>>>>>>> 74af7ebeecfbf5bdbc34dfa069def25e5bb2869b
 
+      <div class="button-container">
+        <button type="submit" class="btn-save">Save</button>
+        <a href="{% url 'destination:list' %}" class="btn-cancel">Cancel</a>
+      </div>
+    </form>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>

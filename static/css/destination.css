@@ -202,6 +202,8 @@ body {
   display: flex;
   gap: 6px;
   align-items: center;
+<<<<<<< HEAD
+=======
 }
 
 /* ✅ ADDED THIS STYLE FOR THE NEW BUTTON */
@@ -219,4 +221,5 @@ body {
 
 .view-btn:hover {
   opacity: 0.85;
+>>>>>>> 74af7ebeecfbf5bdbc34dfa069def25e5bb2869b
 }

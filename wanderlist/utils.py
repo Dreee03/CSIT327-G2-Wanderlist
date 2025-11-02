@@ -1,4 +1,4 @@
-from dashboard.supabase_client import supabase
+from wanderlist.supabase_client import supabase
 
 
 def register_user(email, password, username, first_name, last_name, age):

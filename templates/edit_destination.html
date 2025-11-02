@@ -3,9 +3,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Edit Destination | WanderList</title>
   <link rel="stylesheet" href="{% static 'css/theme.css' %}">
   <link rel="stylesheet" href="{% static 'css/edit_destination.css' %}">
+<<<<<<< HEAD
+=======
   
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
   
@@ -20,38 +23,63 @@
       z-index: 1;
     }
   </style>
+>>>>>>> 74af7ebeecfbf5bdbc34dfa069def25e5bb2869b
 </head>
 <body>
   <div class="edit-container">
     <div class="edit-card">
-      <h2 class="edit-title">Edit Destination</h2>
+      <h1 class="edit-title">Edit Destination</h1>
+
+      <!-- ✅ Display success/error messages -->
       {% if messages %}
-      <div>
+      <div class="alert-container">
         {% for message in messages %}
           <div class="alert {{ message.tags }}">{{ message }}</div>
         {% endfor %}
       </div>
       {% endif %}
 
+<<<<<<< HEAD
+      <!-- ✅ Edit Destination Form -->
+      <form method="POST" class="edit-form">
+=======
       <form method="POST" class="edit-form" enctype="multipart/form-data">
+>>>>>>> 74af7ebeecfbf5bdbc34dfa069def25e5bb2869b
         {% csrf_token %}
         
         <div class="form-group">
-          <label>Name</label>
-          <input type="text" name="name" value="{{ destination.name }}" required>
+          <label for="destination_image">Destination Image (upload or URL - optional):</label>
+          <input type="file" id="destination_image" name="destination_image" accept="image/*">
+          <small>Or enter an image URL:</small>
+          <input type="url" id="destination_image_url" name="destination_image" value="{{ destination.destination_image }}" placeholder="Enter image URL">
         </div>
 
+        <!-- Destination Name -->
+        <div class="form-group">
+          <label for="name">Destination Name</label>
+          <input type="text" id="name" name="name" value="{{ destination.name }}" required>
+        </div>
+
+        <!-- City and Country -->
         <div class="form-row">
           <div class="form-group">
+<<<<<<< HEAD
+            <label for="city">City</label>
+            <input type="text" id="city" name="city" value="{{ destination.city }}" required>
+=======
             <label>City</label>
             <input type="text" name="city" value="{{ destination.city }}" required>
+>>>>>>> 74af7ebeecfbf5bdbc34dfa069def25e5bb2869b
           </div>
           <div class="form-group">
-            <label>Country</label>
-            <input type="text" name="country" value="{{ destination.country }}" required>
+            <label for="country">Country</label>
+            <input type="text" id="country" name="country" value="{{ destination.country }}" required>
           </div>
         </div>
 
+<<<<<<< HEAD
+        <!-- Description -->
+=======
         <label>Click on the map to set coordinates:</label>
         <div id="picker-map"></div>
 
@@ -66,20 +94,39 @@
           </div>
         </div>
 
+>>>>>>> 74af7ebeecfbf5bdbc34dfa069def25e5bb2869b
         <div class="form-group">
-          <label>Description</label>
-          <textarea name="description" rows="4" maxlength="500">{{ destination.description }}</textarea>
+          <label for="description">Description</label>
+          <textarea id="description" name="description" rows="4" maxlength="500" placeholder="Describe the destination...">{{ destination.description }}</textarea>
         </div>
 
+<<<<<<< HEAD
+        <!-- Category -->
+=======
+>>>>>>> 74af7ebeecfbf5bdbc34dfa069def25e5bb2869b
         <div class="form-group">
-          <label>Category</label>
-          <select name="category" required>
+          <label for="category">Category</label>
+          <select id="category" name="category" required>
+            <option value="Dreaming" {% if destination.category == "Dreaming" %}selected{% endif %}>Dreaming</option>
             <option value="Planned" {% if destination.category == "Planned" %}selected{% endif %}>Planned</option>
             <option value="Visited" {% if destination.category == "Visited" %}selected{% endif %}>Visited</option>
-            <option value="Dreaming" {% if destination.category == "Dreaming" %}selected{% endif %}>Dreaming</option>
           </select>
         </div>
 
+<<<<<<< HEAD
+        <!-- ✅ Notes / Journal Entry -->
+        <div class="form-group">
+          <label for="notes">Notes / Journal Entry</label>
+          <textarea 
+            id="notes" 
+            name="notes" 
+            rows="4" 
+            maxlength="1000" 
+            placeholder="Write your travel memories or reflections here...">{{ destination.notes }}</textarea>
+        </div>
+
+        <!-- ✅ Buttons -->
+=======
         <div class="form-group">
           <label>Destination Photo</label>
           {% if destination.image_url %}
@@ -88,8 +135,10 @@
           <input type="file" name="image" accept="image/png, image/jpeg, image/webp">
         </div>
 
+>>>>>>> 74af7ebeecfbf5bdbc34dfa069def25e5bb2869b
         <div class="button-row">
-          <a href="{% url 'destination:list' %}" class="cancel-btn">Cancel</a>
+          <!-- Cancel now safely redirects without submitting -->
+          <a href="{% url 'dashboard' %}" class="cancel-btn" onclick="return confirm('Discard changes and go back?')">Cancel</a>
           <button type="submit" class="save-btn">Save Changes</button>
         </div>
       </form>
