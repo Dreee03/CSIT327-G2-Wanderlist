@@ -8,8 +8,8 @@
 
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #F9FAFB;
-  color: #111827;
+  background: var(--wl-bg);
+  color: var(--wl-text);
   margin: 0;
   display: flex;
   flex-direction: column;
@@ -26,7 +26,7 @@ a {
    NAVBAR
 ================================================ */
 .navbar {
-  background: linear-gradient(90deg, #4F46E5, #6366F1);
+  background: linear-gradient(90deg, var(--wl-deep), var(--wl-blue));
   box-shadow: 0 4px 15px rgba(0,0,0,0.15);
   padding: 0.75rem 1.5rem;
   display: flex;
@@ -35,10 +35,23 @@ a {
 }
 
 .navbar-brand {
-  
   font-weight: 700;
-  font-size: 1.5rem;
+  font-size: 2.25rem; /* ~36px to match 36px logo height */
   color: #fff !important;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1;
+}
+
+.brand-logo {
+  height: 36px !important;
+  width: 36px !important;
+  max-height: 36px !important;
+  object-fit: contain;
+  margin-right: 8px;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .navbar .nav-buttons {
@@ -49,44 +62,55 @@ a {
 .navbar .btn {
   font-weight: 500;
 }
-
-/* ================================================
-   HERO SECTION
-================================================ */
+/* HERO SECTION — Strict containment */
 .hero-section {
-  height: 60vh; /* smaller hero height for better balance */
   position: relative;
-  background: url("../images/hero.jpg") center/cover no-repeat;
+  width: 100%;
+  height: 420px;                /* gray section size */
+  background-color: #8e959d;    /* gray fallback */
+  overflow: hidden;             /* keep video inside */
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.hero-section .overlay {
+/* The video stays inside and fills perfectly */
+#hero-video {
   position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0.35);
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  transform: translate(-50%, -50%);
+  object-fit: cover;
+  width: auto;
+  height: auto;
+  z-index: 0;
+  opacity: 0.65;
 }
 
+/* Text appears on top of video */
 .hero-section .content {
   position: relative;
-  z-index: 2;
-  text-align: center;
+  z-index: 1;
   color: #fff;
-  max-width: 600px;
-  padding: 0 20px;
+  text-align: center;
+  padding: 20px;
 }
 
-.hero-section .content h1 {
-  font-size: 2.75rem;
-  font-weight: 700;
-  margin-bottom: 15px;
+/* Responsive behavior */
+@media (max-width: 991px) {
+  .hero-section {
+    height: 360px;
+  }
 }
 
-.hero-section .content p {
-  font-size: 1.2rem;
-  margin-bottom: 25px;
+@media (max-width: 767px) {
+  .hero-section {
+    height: 300px;
+  }
 }
+
 
 /* ================================================
    BUTTONS
@@ -103,20 +127,20 @@ a {
 }
 
 .btn-custom {
-  background: linear-gradient(90deg, #FF7F50, #FF6347);
+  background: linear-gradient(90deg, var(--wl-primary), var(--wl-primary-700));
 }
 
 .btn-custom:hover {
-  background: linear-gradient(90deg, #FF6333, #FF4500);
+  background: linear-gradient(90deg, var(--wl-primary-700), var(--wl-primary));
   transform: translateY(-2px);
 }
 
 .btn-explore {
-  background: linear-gradient(90deg, #4F46E5, #6366F1);
+  background: linear-gradient(90deg, var(--wl-primary), var(--wl-blue));
 }
 
 .btn-explore:hover {
-  background: linear-gradient(90deg, #4338CA, #4F46E5);
+  background: linear-gradient(90deg, var(--wl-primary-700), var(--wl-primary));
   transform: translateY(-2px);
 }
 
@@ -142,7 +166,7 @@ a {
 }
 
 .destination-card {
-  width: 300px; /* uniform card width */
+  width: 300px;
   border-radius: 16px;
   overflow: hidden;
   background: #fff;
@@ -174,19 +198,20 @@ a {
 
 .destination-card .card-text {
   font-size: 0.95rem;
-  color: #4B5563;
+  color: var(--wl-muted);
 }
 
 /* ================================================
    FOOTER
 ================================================ */
 footer {
-  background-color: #F3F4F6;
-  color: #6B7280;
+  background-color: var(--wl-surface);
+  color: var(--wl-muted);
   text-align: center;
   padding: 1.5rem 0;
   font-size: 0.9rem;
   margin-top: auto;
+  border-top: 1px solid var(--wl-border);
 }
 
 /* ================================================
@@ -204,7 +229,11 @@ footer {
 
 @media (max-width: 767px) {
   .hero-section {
-    height: 50vh;
+    padding: 40px 15px;
+  }
+
+  .video-container {
+    width: 90%;
   }
 
   .hero-section .content h1 {

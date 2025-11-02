@@ -1,5 +1,5 @@
 from django.urls import path
-from django.contrib.auth import views as auth_views
+from django.contrib.auth import views as auth_views  # ✅ FIXED: Imported from auth_views
 from . import views
 
 urlpatterns = [
@@ -9,6 +9,7 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
 
     # Forgot Password URLs
+    # ✅ FIXED: Removed indent and changed 'views.' to 'auth_views.'
     path('password-reset/', 
          auth_views.PasswordResetView.as_view(template_name='password_reset.html'), 
          name='password_reset'),

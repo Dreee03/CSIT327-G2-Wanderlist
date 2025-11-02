@@ -1,14 +1,18 @@
 from wanderlist.supabase_client import supabase
 
 
-def register_user(email, password, username):
+def register_user(email, password, username, first_name, last_name, age):
     try:
+        # ✅ REMOVED middle_initial from the data payload
         response = supabase.auth.sign_up({
             "email": email,
             "password": password,
             "options": {
                 "data": {
-                    "username": username
+                    "username": username,
+                    "first_name": first_name,
+                    "last_name": last_name,
+                    "age": age
                 }
             }
         })
@@ -24,6 +28,7 @@ def register_user(email, password, username):
 
 
 def login_user(username, password):
+    # This function is unchanged
     try:
         lookup_response = supabase.table('user').select('email, auth_id, userID, username').eq('username', username).execute()
 
@@ -59,6 +64,8 @@ def login_user(username, password):
 
 
 def supabase_sign_out():
+    # This function is unchanged
+    from dashboard.supabase_client import supabase
     try:
         supabase.auth.sign_out()
     except Exception:

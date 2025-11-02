@@ -7,6 +7,24 @@
   <title>Add Destination | WanderList</title>
   <link rel="stylesheet" href="{% static 'css/theme.css' %}">
   <link rel="stylesheet" href="{% static 'css/add_destination.css' %}">
+  
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  
+  <style>
+    /* ✅ 2. Style for the map picker */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    #picker-map {
+      height: 300px;
+      width: 100%;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      z-index: 1;
+    }
+  </style>
 </head>
 <body>
   <div class="form-container">
@@ -19,6 +37,7 @@
       {% endfor %}
     </div>
     {% endif %}
+<<<<<<< HEAD
 
     <form action="{% url 'destination:create' %}" method="POST" enctype="multipart/form-data">
       {% csrf_token %}
@@ -52,6 +71,59 @@
       <!-- ✅ New Notes / Journal Entry Field -->
       <label for="notes">Notes / Journal Entry (optional):</label>
       <textarea id="notes" name="notes" rows="4" placeholder="Write your travel notes or journal entry here..."></textarea>
+=======
+    
+    <form action="{% url 'destination:create' %}" method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" required>
+    
+      <div class="form-grid">
+        <div>
+          <label for="city">City:</label>
+          <input type="text" id="city" name="city" required>
+        </div>
+        <div>
+          <label for="country">Country:</label>
+          <input type="text" id="country" name="country" required>
+        </div>
+      </div>
+
+      <label>Click on the map to set coordinates:</label>
+      <div id="picker-map"></div>
+      
+      <div class="form-grid">
+        <div>
+          <label for="latitude">Latitude:</label>
+          <input type="number" step="any" id="latitude" name="latitude" placeholder="Click map to select" readonly>
+        </div>
+        <div>
+          <label for="longitude">Longitude:</label>
+          <input type="number" step="any" id="longitude" name="longitude" placeholder="Click map to select" readonly>
+        </div>
+      </div>
+    
+      <label for="category">Category:</label>
+      <select id="category" name="category" required>
+        <option value="">Select a category</option>
+        <option value="Dreaming">Dreaming</option>
+        <option value="Planned">Planned</option>
+        <option value="Visited">Visited</option>
+      </select>
+    
+      <label for="description">Description:</label>
+      <textarea id="description" name="description" rows="4" minlength="0" maxlength="500"></textarea>
+
+      <label for="image">Destination Photo:</label>
+      <input type="file" id="image" name="image" accept="image/png, image/jpeg, image/webp" style="margin-bottom: 20px;">
+    
+      <div class="button-container">
+        <button type="submit" class="btn-save">Save</button>
+        <a href="{% url 'destination:list' %}" class="btn-cancel">Cancel</a>
+      </div>
+    </form>
+>>>>>>> 74af7ebeecfbf5bdbc34dfa069def25e5bb2869b
 
       <div class="button-container">
         <button type="submit" class="btn-save">Save</button>
@@ -59,5 +131,35 @@
       </div>
     </form>
   </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script>
+    (function() {
+      var latInput = document.getElementById('latitude');
+      var lonInput = document.getElementById('longitude');
+
+      var map = L.map('picker-map').setView([20, 0], 2);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      var marker = null;
+
+      map.on('click', function(e) {
+        var lat = e.latlng.lat.toFixed(6);
+        var lon = e.latlng.lng.toFixed(6);
+
+        latInput.value = lat;
+        lonInput.value = lon;
+
+        if (marker) {
+          marker.setLatLng(e.latlng);
+        } else {
+          marker = L.marker(e.latlng).addTo(map);
+        }
+      });
+    })();
+  </script>
 </body>
 </html>

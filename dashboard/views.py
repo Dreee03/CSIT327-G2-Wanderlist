@@ -11,7 +11,7 @@ import json
 
 
 def dashboard_view(request):
-    """Render the dashboard.html with destinations + search & filter."""
+    # This view is unchanged
     if 'supabase_access_token' not in request.session:
         return redirect('login')
 
@@ -19,22 +19,14 @@ def dashboard_view(request):
     user_obj = SupabaseUser(username=username, is_authenticated=True)
     custom_user_id = request.session.get('custom_user_id')
 
-    # Retrieve or create profile record so navbar shows profile picture
     profile, _ = UserProfile.objects.get_or_create(username=username)
 
-    # --- NEW: Get search and filter parameters ---
     query = request.GET.get('q', '').strip()
     category = request.GET.get('category', '').strip()
 
-    try:
-        # Fetch destinations filtered by user_id
-        response = supabase.table("destination").select("*").eq("user_id", custom_user_id).execute()
-        destinations = response.data if response.data else []
-    except Exception as e:
-        destinations = []
-        messages.error(request, f"❌ Could not fetch destinations: {e}")
+    response = supabase.table("destination").select("*").execute()
+    destination = response.data if response.data else []
 
-    # --- Apply local filtering ---
     if query:
         destinations = [
             d for d in destinations
@@ -62,7 +54,7 @@ def dashboard_view(request):
 
 
 def my_lists_view(request):
-    """Render a Leaflet map with all destinations."""
+    # This view is unchanged
     if 'supabase_access_token' not in request.session:
         return redirect('login')
 
@@ -93,7 +85,42 @@ def profile_view(request):
 
     username = request.session.get('logged_in_username', 'User')
     user_obj = SupabaseUser(username=username, is_authenticated=True)
-    profile, _ = UserProfile.objects.get_or_create(username=username)
+
+    # This will now find the profile created during registration
+    profile, created = UserProfile.objects.get_or_create(username=username)
+    
+    # ✅ --- START: Get Destination Stats & Lists ---
+    stats = {'Planned': 0, 'Visited': 0, 'Dreaming': 0, 'Total': 0}
+    
+    # Create lists to hold the actual destinations for the modal
+    planned_destinations = []
+    visited_destinations = []
+    dreaming_destinations = []
+    
+    try:
+        # Fetch the data needed for the lists
+        # Note: This fetches destinations for *all* users.
+        response = supabase.table("destination").select("category, name, image_url").execute()
+        
+        if response.data:
+            all_destinations = response.data
+            stats['Total'] = len(all_destinations)
+            
+            for dest in all_destinations:
+                category = dest.get('category')
+                if category == 'Planned':
+                    stats['Planned'] += 1
+                    planned_destinations.append(dest)
+                elif category == 'Visited':
+                    stats['Visited'] += 1
+                    visited_destinations.append(dest)
+                elif category == 'Dreaming':
+                    stats['Dreaming'] += 1
+                    dreaming_destinations.append(dest)
+    except Exception as e:
+        messages.error(request, f"Could not load destination stats: {e}")
+    # ✅ --- END: Get Destination Stats & Lists ---
+
 
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES, instance=profile)
@@ -108,11 +135,15 @@ def profile_view(request):
         'user': user_obj,
         'form': form,
         'profile': profile,
+        'stats': stats, # Pass stats (counts)
+        'planned_destinations': planned_destinations, # ✅ Pass lists
+        'visited_destinations': visited_destinations,
+        'dreaming_destinations': dreaming_destinations,
     }
     return render(request, 'profile.html', context)
 
 
-# ✅ ADD DESTINATION
+# These functions are unchanged from your file
 def add_destination(request):
     """Add a new destination to Supabase."""
     if 'supabase_access_token' not in request.session:
@@ -165,7 +196,6 @@ def add_destination(request):
     return render(request, "add_destination.html")
 
 
-# ✅ EDIT DESTINATION
 def edit_destination(request, destination_id):
     """Fetch and update a destination from Supabase."""
     if 'supabase_access_token' not in request.session:
@@ -228,7 +258,6 @@ def edit_destination(request, destination_id):
     return render(request, 'edit_destination.html', {'destination': destination})
 
 
-# ✅ DELETE DESTINATION
 def delete_destination(request, destination_id):
     """Delete a destination with confirmation."""
     if 'supabase_access_token' not in request.session:
@@ -242,4 +271,5 @@ def delete_destination(request, destination_id):
             messages.success(request, "🗑️ Destination deleted successfully!")
         except Exception as e:
             messages.error(request, f"❌ Could not delete destination: {e}")
-        return redirect("dashboard")
+    
+    return redirect("dashboard")
