@@ -1,93 +1,213 @@
+/* ================================================
+   ADD DESTINATION PAGE STYLING — WanderList Theme
+================================================ */
+
 body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f6f8;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f3f4f6;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+<<<<<<< HEAD
+  min-height: 100vh;
+=======
+  min-height: 100vh; /* Use min-height to allow scrolling if content is tall */
+>>>>>>> 74af7ebeecfbf5bdbc34dfa069def25e5bb2869b
   margin: 0;
+  padding: 2rem 0; /* Add some padding for smaller viewports */
 }
 
+/* ====== Form Container ====== */
 .form-container {
+<<<<<<< HEAD
+  background-color: #ffffff;
+  padding: 30px 40px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  width: 400px;
+  transition: box-shadow 0.3s ease;
+=======
   background-color: #fff;
   padding: 25px 35px;
   border-radius: 10px;
   box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-  width: 400px;
+  
+  /* ✅ CHANGED: Increased width from 400px to 700px */
+  width: 700px;
+  
+  /* ✅ ADDED: Ensures responsiveness on smaller screens */
+  max-width: 90%; 
+  box-sizing: border-box; /* Ensures padding doesn't break layout */
+>>>>>>> 74af7ebeecfbf5bdbc34dfa069def25e5bb2869b
 }
 
+.form-container:hover {
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12);
+}
+
+/* ====== Title ====== */
 h1 {
   text-align: center;
-  color: #333;
-  margin-bottom: 20px;
+  color: #1e3a8a;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 25px;
 }
 
+/* ====== Labels ====== */
 label {
-  font-weight: bold;
+  font-weight: 600;
   display: block;
   margin-bottom: 6px;
+<<<<<<< HEAD
+  color: #374151;
+  font-size: 0.95rem;
+=======
   color: #555;
+  margin-top: 10px; /* Add some space above labels */
+>>>>>>> 74af7ebeecfbf5bdbc34dfa069def25e5bb2869b
 }
 
+/* ====== Input Fields ====== */
 input,
 textarea,
 select {
   width: 100%;
-  padding: 10px;
+  padding: 10px 12px;
   margin-bottom: 15px;
+<<<<<<< HEAD
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background-color: #ffffff;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+=======
   border: 1px solid #ccc;
   border-radius: 6px;
   font-size: 14px;
   transition: border-color 0.3s ease;
+  box-sizing: border-box; /* Ensures padding doesn't break layout */
+>>>>>>> 74af7ebeecfbf5bdbc34dfa069def25e5bb2869b
 }
 
-/* --- Dropdown Styling --- */
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+  outline: none;
+}
+
+/* ====== Textarea ====== */
+textarea {
+  resize: vertical;
+  min-height: 80px;
+  line-height: 1.4;
+}
+
+/* ====== Dropdown Styling ====== */
 select {
   background-color: #fff;
-  color: #333;
   appearance: none;
   cursor: pointer;
-  background-image: 
-    linear-gradient(45deg, transparent 50%, #666 50%),
-    linear-gradient(135deg, #666 50%, transparent 50%);
-  background-position: 
-    calc(100% - 15px) center,
-    calc(100% - 10px) center;
-  background-size: 6px 6px;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg width='10' height='7' viewBox='0 0 10 7' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23374251' stroke-width='2'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-}
-
-select:focus {
-  border-color: #1e90ff;
-  box-shadow: 0 0 0 3px rgba(30, 144, 255, 0.2);
+  background-position: right 12px center;
+  background-size: 10px 7px;
 }
 
 select:hover {
-  border-color: #0d6efd;
+  border-color: #1d4ed8;
 }
 
+/* ====== Buttons ====== */
 .button-container {
   display: flex;
   justify-content: space-between;
+<<<<<<< HEAD
+  align-items: center;
+  margin-top: 10px;
+}
+
+.btn-save,
+.btn-cancel {
+  border: none;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.25s ease;
+=======
+  margin-top: 20px; /* Add space above buttons */
+>>>>>>> 74af7ebeecfbf5bdbc34dfa069def25e5bb2869b
 }
 
 .btn-save {
-  background-color: #1e90ff;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.btn-cancel {
-  text-decoration: none;
-  color: #333;
-  border: 1px solid #ccc;
-  padding: 10px 20px;
-  border-radius: 6px;
+  background-color: #2563eb;
+  color: #fff;
 }
 
 .btn-save:hover {
-  background-color: #0d6efd;
+  background-color: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+.btn-cancel {
+  background-color: #6b7280;
+  color: #fff;
+}
+
+.btn-cancel:hover {
+  background-color: #4b5563;
+  transform: translateY(-1px);
+}
+
+/* ====== Alert Messages ====== */
+.alert {
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+}
+
+.alert.success {
+  background-color: #d1fae5;
+  color: #065f46;
+  border: 1px solid #10b981;
+}
+
+.alert.error {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #ef4444;
+}
+
+/* ====== Responsive Design ====== */
+@media (max-width: 480px) {
+  .form-container {
+    width: 90%;
+    padding: 25px;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+  }
+}
+
+/* --- Style for the new grid layout in the form --- */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+/* --- Style for the map picker --- */
+#picker-map {
+  height: 300px;
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  z-index: 1;
 }
