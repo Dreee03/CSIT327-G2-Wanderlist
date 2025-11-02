@@ -64,9 +64,10 @@ def login_user(username, password):
 
 
 def supabase_sign_out():
-    # This function is unchanged
-    from dashboard.supabase_client import supabase
+    """Sign out from Supabase auth."""
     try:
         supabase.auth.sign_out()
-    except Exception:
-        pass
+        return True
+    except Exception as e:
+        print(f"Error during sign out: {e}")
+        return False

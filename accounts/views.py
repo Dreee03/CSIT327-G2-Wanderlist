@@ -93,19 +93,17 @@ def login_view(request):
 
 
 def logout_view(request):
-    # This view is unchanged
+    """Sign out the user and clear session."""
     from wanderlist.utils import supabase_sign_out
     
-    supabase_sign_out() 
+    # Try to sign out from Supabase
+    try:
+        supabase_sign_out()
+    except Exception as e:
+        print(f"Error during Supabase signout: {e}")
     
-    if 'supabase_access_token' in request.session:
-        del request.session['supabase_access_token']
-    if 'supabase_auth_id' in request.session:
-        del request.session['supabase_auth_id']
-    if 'custom_user_id' in request.session:
-        del request.session['custom_user_id']
-    if 'logged_in_username' in request.session:
-        del request.session['logged_in_username']
-        
+    # Always clear the session, even if Supabase sign out fails
+    request.session.flush()  # This removes all session data
+    
     messages.info(request, "You have been logged out.")
     return redirect('login')
