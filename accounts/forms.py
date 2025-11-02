@@ -29,8 +29,26 @@ class CustomUserCreationForm(forms.Form):
             'required': 'required'
         })
     )
-    password = forms.CharField( # Changed from password1 for cleaner access in view
-        label="Password",
+    
+    # ✅ Middle initial field removed, but First/Last/Age remain
+    first_name = forms.CharField(
+        label='First Name:',
+        max_length=100,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First Name', 'required': 'required'})
+    )
+    last_name = forms.CharField(
+        label='Last Name:',
+        max_length=100,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last Name', 'required': 'required'})
+    )
+    age = forms.IntegerField(
+        label='Age:',
+        required=False,
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Age'})
+    )
+
+    password = forms.CharField( 
+        label="Password:",
         min_length=8,
         validators=[
             RegexValidator(
@@ -46,7 +64,7 @@ class CustomUserCreationForm(forms.Form):
         })
     )
     password2 = forms.CharField(
-        label="Confirm Password",
+        label="Confirm Password:",
         widget=forms.PasswordInput(attrs={
             'class': 'form-control',
             'placeholder': 'Re-enter password',
@@ -55,10 +73,8 @@ class CustomUserCreationForm(forms.Form):
         })
     )
 
-    # Add clean method for password confirmation (essential form logic)
     def clean(self):
         cleaned_data = super().clean()
-        # Normalize inputs
         username = cleaned_data.get("username")
         email = cleaned_data.get("email")
         password = cleaned_data.get("password")
@@ -75,7 +91,7 @@ class CustomUserCreationForm(forms.Form):
 
 
 class CustomAuthenticationForm(forms.Form):
-    # Keep the field definitions as they are, but inherit from forms.Form
+    # This class is unchanged
     username = forms.CharField(
         min_length=3,
         max_length=150,
@@ -107,7 +123,7 @@ class CustomAuthenticationForm(forms.Form):
         return cleaned_data
 
 class SupabaseUser:
-    """Mimics django.contrib.auth.models.User for template compatibility."""
+    # This class is unchanged
     def __init__(self, username, is_authenticated=True):
         self.username = username
         self.is_authenticated = is_authenticated
@@ -115,7 +131,6 @@ class SupabaseUser:
     def __str__(self):
         return self.username
     
-    # Required for compatibility with certain Django internals
     def is_anonymous(self):
         return not self.is_authenticated
     def is_staff(self):

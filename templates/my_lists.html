@@ -9,20 +9,62 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
   <style>
     html, body { height: 100%; margin: 0; }
-    .layout { display: grid; grid-template-columns: 260px 1fr; height: 100%; }
-    .sidebar { background:#111827; color:#fff; padding:24px; display:flex; flex-direction:column; gap:24px; }
+    
+    .layout { 
+      display: grid; 
+      grid-template-columns: 260px 1fr; 
+      height: 100%; 
+    }
+    
+    .sidebar { 
+      background:#111827; 
+      color:#fff; 
+      padding:24px; 
+      display:flex; 
+      flex-direction:column; 
+      gap:24px; 
+      flex-shrink: 0;
+    }
+    
     .sidebar .logo { margin:0; font-size:22px; }
     .nav a { display:block; color:#cbd5e1; text-decoration:none; padding:10px 12px; border-radius:8px; margin-bottom:6px; }
     .nav a.active, .nav a:hover { background:#1f2937; color:#fff; }
     .profile { margin-top:auto; display:flex; align-items:center; gap:10px; }
     .profile-img { width:36px; height:36px; border-radius:50%; object-fit:cover; }
-    .main { padding:20px; display:flex; flex-direction:column; gap:16px; align-items:center; }
-    .header { width:100%; max-width: 900px; display:flex; justify-content:space-between; align-items:center; }
-    .category-bar { 
-      width:100%; max-width: 900px; display:flex; gap:10px; flex-wrap:wrap; 
-      position: relative; z-index: 2000; margin-bottom: 16px; 
-      pointer-events: auto; user-select: none;
+    
+    .main { 
+      padding: 20px; 
+      display: flex; 
+      flex-direction: column; 
+      gap: 16px; 
+      max-width: 1200px; 
+      margin: 0 auto;
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box; 
     }
+    
+    .header { 
+      width: 100%; 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center;
+      flex-shrink: 0;
+    }
+    
+    .category-bar { 
+      width: 100%; 
+      display: flex; 
+      gap: 10px; 
+      flex-wrap: wrap; 
+      position: relative; 
+      z-index: 2000; 
+      margin-bottom: 16px; 
+      pointer-events: auto; 
+      user-select: none;
+      flex-shrink: 0;
+    }
+    
     .category-bar .btn { 
       border:1px solid #cbd5e1; background:#fff; color:#111827; 
       padding:8px 14px; border-radius:8px; cursor:pointer; 
@@ -35,12 +77,19 @@
     .category-bar .btn.active { 
       background:#111827; color:#fff; border-color:#111827; 
     }
+    
     .map-wrapper { 
-      width: 1400px; height: 800px; border-radius:12px; 
-      box-shadow: 0 6px 18px rgba(0,0,0,0.15); overflow:hidden; 
-      background:#f1f5f9; position: relative; z-index: 1; 
+      width: 100%;
+      flex-grow: 1; 
+      border-radius: 12px; 
+      box-shadow: 0 6px 18px rgba(0,0,0,0.15); 
+      overflow: hidden; 
+      background: #f1f5f9; 
+      position: relative; 
+      z-index: 1; 
       pointer-events: auto; 
     }
+    
     .map-wrapper::before {
       content: '';
       position: absolute;
@@ -52,7 +101,84 @@
       z-index: 10;
       pointer-events: none;
     }
-    #map { width:100%; height:100%; }
+    
+    #map { 
+      width: 100%; 
+      height: 100%; 
+    }
+
+    /* ✅ --- START: CUSTOM MARKER STYLES --- */
+    .custom-marker {
+      background: #fff;
+      border: 1px solid #555;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+      padding: 4px 10px; /* A bit wider padding */
+      font-family: Arial, sans-serif;
+      font-size: 13px; /* Slightly larger */
+      font-weight: 600;
+      text-align: center;
+      white-space: nowrap;
+      color: #333;
+      
+      /* Position the marker *above* the geographic point */
+      position: absolute;
+      transform: translate(-50%, -100%);
+      margin-bottom: 12px; /* Make space for the pointer */
+    }
+
+    /* The little triangle "pointer" */
+    .custom-marker::after {
+      content: '';
+      position: absolute;
+      bottom: -6px; /* Position it at the bottom */
+      left: 50%;
+      transform: translateX(-50%); /* Center it */
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 6px solid #fff; /* Same color as marker bg */
+    }
+    
+    /* Category Colors */
+    .marker-visited {
+      background: #28a745; /* Green */
+      border-color: #1e7e34;
+      color: #fff;
+    }
+    .marker-visited::after {
+      border-top-color: #28a745;
+    }
+    
+    .marker-planned {
+      background: #007bff; /* Blue */
+      border-color: #0056b3;
+      color: #fff;
+    }
+    .marker-planned::after {
+      border-top-color: #007bff;
+    }
+
+    .marker-dreaming {
+      background: #6f42c1; /* Purple */
+      border-color: #5a359a;
+      color: #fff;
+    }
+    .marker-dreaming::after {
+      border-top-color: #6f42c1;
+    }
+    
+    .marker-default { /* Fallback style */
+      background: #6c757d;
+      border-color: #5a6268;
+      color: #fff;
+    }
+    .marker-default::after {
+      border-top-color: #6c757d;
+    }
+    /* ✅ --- END: CUSTOM MARKER STYLES --- */
+
   </style>
 </head>
 <body>
@@ -97,7 +223,6 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script>
     (function() {
-      // Prepare map with an initial center so tiles load immediately
       var map = L.map('map');
       map.setView([20, 0], 2);
       var tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -105,7 +230,6 @@
         attribution: '&copy; OpenStreetMap contributors'
       }).addTo(map);
 
-      // Parse JSON passed from the view (string -> object)
       var destinations = [];
       try {
         destinations = JSON.parse('{{ destinations_json|escapejs }}');
@@ -113,27 +237,66 @@
         destinations = [];
       }
 
+      // ✅ --- START: DEFINE CUSTOM ICON FUNCTION ---
+      /**
+       * Creates a custom marker icon with a category label and color
+       * @param {string} labelText - The text to display on the marker (e.g., "Paris")
+       * @param {string} category - The category ('visited', 'planned', 'dreaming')
+       */
+      function createDestinationIcon(labelText, category) {
+        // Use 'marker-default' if category is null or empty
+        var categoryClass = 'marker-' + (category || 'default'); 
+        
+        return L.divIcon({
+          className: 'custom-marker ' + categoryClass,
+          html: labelText, // Use the destination name as the label
+          iconSize: [null, null], // Auto-size based on content
+          iconAnchor: [0, 0],   // Anchor at the tip (handled by CSS transform)
+          popupAnchor: [1, -15]  // Position popup just above the marker
+        });
+      }
+      // ✅ --- END: DEFINE CUSTOM ICON FUNCTION ---
+
+
       var allMarkers = [];
       destinations.forEach(function(d) {
         var lat = d.latitude != null ? parseFloat(d.latitude) : null;
         var lon = d.longitude != null ? parseFloat(d.longitude) : null;
-        if (!isFinite(lat) || !isFinite(lon)) return;
+        
+        if (lat == null || lon == null || !isFinite(lat) || !isFinite(lon)) return;
+
         var name = d.name || 'Unknown';
         var city = d.city || '';
         var country = d.country || '';
-        var category = d.category || '';
+        var category = (d.category || 'default').toLowerCase();
         var description = d.description || '';
+        var destId = d.destinationID;
 
-        var marker = L.marker([lat, lon]);
+        // ✅ Create the specific icon for this destination
+        // It uses the destination's NAME for the text
+        // and the destination's CATEGORY for the color.
+        var chosenIcon = createDestinationIcon(name, category);
+
+        var marker = L.marker([lat, lon], { icon: chosenIcon });
+
+        // Capitalize first letter of category for the popup
+        var popupCategory = category.charAt(0).toUpperCase() + category.slice(1);
+        
         var popupHtml = '<strong>' + name + '</strong>' +
                         (city || country ? '<div style="margin-top:4px; color:#64748b;">' + [city, country].filter(Boolean).join(', ') + '</div>' : '') +
-                        (category ? '<div style="margin-top:6px;"><span style="background:#eef2ff; color:#3730a3; padding:2px 8px; border-radius:999px; font-size:12px;">' + category + '</span></div>' : '') +
+                        (category ? '<div style="margin-top:6px;"><span style="background:#eef2ff; color:#3730a3; padding:2px 8px; border-radius:999px; font-size:12px;">' + popupCategory + '</span></div>' : '') +
                         (description ? '<p style="margin-top:8px; max-width:260px;">' + description + '</p>' : '');
         marker.bindPopup(popupHtml);
-        allMarkers.push({ marker: marker, category: String(category || '').toLowerCase() });
+        
+        allMarkers.push({ 
+            marker: marker, 
+            category: category,
+            id: destId 
+        });
       });
 
       var markersLayer = L.featureGroup().addTo(map);
+      var buttons = document.querySelectorAll('.category-bar .btn');
 
       function applyFilter(filter) {
         markersLayer.clearLayers();
@@ -152,48 +315,44 @@
         }
       }
 
-      // Initial render with all markers
       applyFilter('all');
 
-      // Wire up category bar with improved event handling
-      var buttons = document.querySelectorAll('.category-bar .btn');
       buttons.forEach(function(btn){
-        btn.addEventListener('mousedown', function(ev){
-          ev.preventDefault();
-          ev.stopPropagation();
-        });
-        
+        btn.addEventListener('mousedown', function(ev){ ev.preventDefault(); ev.stopPropagation(); });
         btn.addEventListener('click', function(ev){
-          ev.preventDefault();
-          ev.stopPropagation();
-          ev.stopImmediatePropagation();
-          
-          // Remove active from all buttons
+          ev.preventDefault(); ev.stopPropagation(); ev.stopImmediatePropagation();
           buttons.forEach(function(b){ b.classList.remove('active'); });
-          
-          // Add active to clicked button
           this.classList.add('active');
-          
-          // Apply filter
           var filter = this.getAttribute('data-filter');
           applyFilter(filter);
-          
           return false;
         }, { passive: false, capture: true });
-        
-        // Prevent any accidental map interactions
-        btn.addEventListener('mouseup', function(ev){
-          ev.preventDefault();
-          ev.stopPropagation();
-        });
+        btn.addEventListener('mouseup', function(ev){ ev.preventDefault(); ev.stopPropagation(); });
       });
 
-      // Ensure map sizes correctly after layout/ CSS
       setTimeout(function() { map.invalidateSize(); }, 50);
       window.addEventListener('resize', function(){ map.invalidateSize(); });
+
+      (function checkQueryParameter() {
+        var params = new URLSearchParams(window.location.search);
+        var destId = params.get('dest_id');
+        if (!destId) return;
+        destId = parseInt(destId, 10);
+        if (isNaN(destId)) return;
+        
+        var found = allMarkers.find(function(m) { return m.id === destId; });
+
+        if (found) {
+          applyFilter('all');
+          buttons.forEach(function(b){ b.classList.remove('active'); });
+          var allBtn = document.querySelector('.category-bar .btn[data-filter="all"]');
+          if (allBtn) allBtn.classList.add('active');
+          map.setView(found.marker.getLatLng(), 13); 
+          found.marker.openPopup();
+        }
+      })();
+      
     })();
   </script>
 </body>
 </html>
-
-

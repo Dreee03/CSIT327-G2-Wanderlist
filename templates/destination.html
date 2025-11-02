@@ -38,7 +38,6 @@
 </head>
 <body>
 
-  <!-- Sidebar -->
   <aside class="sidebar">
     <h1 class="logo">WanderList</h1>
     <nav class="nav">
@@ -47,17 +46,19 @@
       <a href="{% url 'my_lists' %}">My Maps</a>
       <a href="#">Explore</a>
     </nav>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 74af7ebeecfbf5bdbc34dfa069def25e5bb2869b
     <div class="profile">
       <img src="{% static 'images/profile.jpg' %}" alt="User" class="profile-img">
       <span>{{ user.username }}</span>
     </div>
   </aside>
 
-  <!-- Main Content -->
   <main class="main">
     <div class="container">
 
-      <!-- Messages -->
       {% if messages %}
         <div class="messages">
           {% for message in messages %}
@@ -66,11 +67,11 @@
         </div>
       {% endif %}
 
-      <!-- Add Destination Button -->
       <div class="add-button-container">
         <a href="{% url 'destination:add_destination' %}" class="add-button">+ Add New Destination</a>
       </div>
 
+<<<<<<< HEAD
       <!-- Search & Filter -->
       <div class="filter-bar">
         <input type="text" id="searchInput" placeholder="Search by name, city, country, or description..." class="filter-input">
@@ -84,6 +85,8 @@
       </div>
 
       <!-- Destination Table -->
+=======
+>>>>>>> 74af7ebeecfbf5bdbc34dfa069def25e5bb2869b
       <div class="card">
         <h2 class="card-title">All Destinations</h2>
 
@@ -109,6 +112,7 @@
                 <td>{{ dest.category }}</td>
                 <td>{{ dest.description }}</td>
                 <td class="actions">
+                  <a href="{% url 'my_lists' %}?dest_id={{ dest.destinationID }}" class="view-btn">View Map</a>
                   <a href="{% url 'destination:edit' dest.destinationID %}" class="edit-btn">Edit</a>
                   <form method="POST" action="{% url 'destination:delete' dest.destinationID %}" class="inline">
                     {% csrf_token %}

@@ -8,18 +8,37 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+<<<<<<< HEAD
   min-height: 100vh;
+=======
+  min-height: 100vh; /* Use min-height to allow scrolling if content is tall */
+>>>>>>> 74af7ebeecfbf5bdbc34dfa069def25e5bb2869b
   margin: 0;
+  padding: 2rem 0; /* Add some padding for smaller viewports */
 }
 
 /* ====== Form Container ====== */
 .form-container {
+<<<<<<< HEAD
   background-color: #ffffff;
   padding: 30px 40px;
   border-radius: 12px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
   width: 400px;
   transition: box-shadow 0.3s ease;
+=======
+  background-color: #fff;
+  padding: 25px 35px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  
+  /* ✅ CHANGED: Increased width from 400px to 700px */
+  width: 700px;
+  
+  /* ✅ ADDED: Ensures responsiveness on smaller screens */
+  max-width: 90%; 
+  box-sizing: border-box; /* Ensures padding doesn't break layout */
+>>>>>>> 74af7ebeecfbf5bdbc34dfa069def25e5bb2869b
 }
 
 .form-container:hover {
@@ -40,8 +59,13 @@ label {
   font-weight: 600;
   display: block;
   margin-bottom: 6px;
+<<<<<<< HEAD
   color: #374151;
   font-size: 0.95rem;
+=======
+  color: #555;
+  margin-top: 10px; /* Add some space above labels */
+>>>>>>> 74af7ebeecfbf5bdbc34dfa069def25e5bb2869b
 }
 
 /* ====== Input Fields ====== */
@@ -51,11 +75,19 @@ select {
   width: 100%;
   padding: 10px 12px;
   margin-bottom: 15px;
+<<<<<<< HEAD
   border: 1px solid #d1d5db;
   border-radius: 8px;
   font-size: 0.95rem;
   background-color: #ffffff;
   transition: border-color 0.25s ease, box-shadow 0.25s ease;
+=======
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+  box-sizing: border-box; /* Ensures padding doesn't break layout */
+>>>>>>> 74af7ebeecfbf5bdbc34dfa069def25e5bb2869b
 }
 
 input:focus,
@@ -92,6 +124,7 @@ select:hover {
 .button-container {
   display: flex;
   justify-content: space-between;
+<<<<<<< HEAD
   align-items: center;
   margin-top: 10px;
 }
@@ -106,6 +139,9 @@ select:hover {
   cursor: pointer;
   text-decoration: none;
   transition: all 0.25s ease;
+=======
+  margin-top: 20px; /* Add space above buttons */
+>>>>>>> 74af7ebeecfbf5bdbc34dfa069def25e5bb2869b
 }
 
 .btn-save {
@@ -158,4 +194,20 @@ select:hover {
   h1 {
     font-size: 1.6rem;
   }
+}
+
+/* --- Style for the new grid layout in the form --- */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+/* --- Style for the map picker --- */
+#picker-map {
+  height: 300px;
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  z-index: 1;
 }
