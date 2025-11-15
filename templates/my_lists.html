@@ -194,8 +194,10 @@
       </nav>
       <div class="profile">
         {% static 'images/profile.jpg' as default_profile %}
-        <img src="{{ profile.profile_pic.url|default:default_profile }}" alt="User" class="profile-img">
-        <span>{{ user.username }}</span>
+        <a href="{% url 'profile' %}" style="display:flex; align-items:center; gap:10px; color:inherit; text-decoration:none;">
+          <img src="{{ profile.profile_pic.url|default:default_profile }}" alt="User" class="profile-img">
+          <span>{{ user.username }}</span>
+        </a>
       </div>
     </aside>
 
