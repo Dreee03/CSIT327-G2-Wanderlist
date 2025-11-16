@@ -190,7 +190,7 @@
         <a href="{% url 'dashboard' %}">Dashboard</a>
         <a href="{% url 'destination:list' %}">Destinations</a>
         <a href="{% url 'my_lists' %}" class="active">My Maps</a>
-        <a href="#">Explore</a>
+        <a href="{% url 'destination:explore' %}">Explore</a>
       </nav>
       <div class="profile">
         {% static 'images/profile.jpg' as default_profile %}

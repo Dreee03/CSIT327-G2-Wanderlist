@@ -65,7 +65,7 @@ def create_destination(request):
                 destination_image = f"{settings.SUPABASE_URL}/storage/v1/object/public/DestinationImages/{file_path}"
             except Exception as e:
                 messages.error(request, f'❌ Could not upload image: {e}')
-                return redirect('destination:add_destination')
+                return redirect('destination:list')
             
         name = (request.POST.get('name') or '').strip()
         city = (request.POST.get('city') or '').strip()
@@ -82,10 +82,10 @@ def create_destination(request):
 
         if not name or not city or not country or not category:
             messages.error(request, 'Please fill out all required fields.')
-            return redirect('destination:add_destination')
+            return redirect('destination:list')
         if len(description) > 500:
                 messages.error(request, 'Description must be 500 characters or fewer.')
-                return redirect('destination:add_destination')
+                return redirect('destination:list')
             
         # ✅ Convert coordinates to float or None
         try:
@@ -93,7 +93,7 @@ def create_destination(request):
             longitude = float(longitude) if longitude else None
         except ValueError:
             messages.error(request, 'Latitude and Longitude must be valid numbers.')
-            return redirect('destination:add_destination')
+            return redirect('destination:list')
 
         # ✅ Check for duplicates
         try:
@@ -106,10 +106,10 @@ def create_destination(request):
             
             if existing.data:
                 messages.error(request, f'This destination ({name}, {city}) already exists.')
-                return redirect('destination:add_destination')
+                return redirect('destination:list')
         except Exception as e:
             messages.error(request, f'Error checking for duplicates: {e}')
-            return redirect('destination:add_destination')
+            return redirect('destination:list')
 
         data = {
             'destination_image': destination_image or None,  # ✅ Save null if empty
@@ -130,7 +130,7 @@ def create_destination(request):
             return redirect('destination:list')
         except Exception as e:
             messages.error(request, f'Error adding destination: {e}')
-            return redirect('destination:add_destination')
+            return redirect('destination:list')
         
 @csrf_protect
 def edit_destination(request, destination_id):
@@ -233,3 +233,5 @@ def delete_destination(request, destination_id):
 def redirect_to_dashboard(request):
 	"""Redirect to the main dashboard page."""
 	return redirect(reverse('dashboard'))
+def explore(request):
+    return render(request, 'explore.html')

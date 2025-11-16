@@ -6,6 +6,7 @@ from .forms import ProfileForm
 from wanderlist.supabase_client import supabase
 from django.contrib import messages
 import json
+import datetime
 
 
 def dashboard_view(request):
@@ -21,6 +22,7 @@ def dashboard_view(request):
 
     query = request.GET.get('q', '').strip()
     category = request.GET.get('category', '').strip()
+    sort = request.GET.get('sort', '').strip()
 
     response = supabase.table("destination").select("*").eq("user_id", custom_user_id).execute()
     destinations = response.data if response.data else []
@@ -41,12 +43,42 @@ def dashboard_view(request):
             if d.get('category', '').lower() == category.lower()
         ]
 
+    # Apply sorting if requested
+    def _parse_date(d):
+        # Look for common created/added timestamp fields used by Supabase
+        for key in ('created_at', 'createdAt', 'inserted_at', 'date_added', 'added_at'):
+            v = d.get(key)
+            if v:
+                try:
+                    # Accept ISO format and variances (remove trailing Z -> +00:00)
+                    return datetime.datetime.fromisoformat(v.replace('Z', '+00:00'))
+                except Exception:
+                    try:
+                        return datetime.datetime.strptime(v, '%Y-%m-%d %H:%M:%S')
+                    except Exception:
+                        continue
+        return None
+
+    try:
+        if sort == 'date_desc':
+            destinations.sort(key=lambda x: _parse_date(x) or datetime.datetime.min, reverse=True)
+        elif sort == 'date_asc':
+            destinations.sort(key=lambda x: _parse_date(x) or datetime.datetime.min)
+        elif sort == 'name_asc':
+            destinations.sort(key=lambda x: (x.get('name') or '').lower())
+        elif sort == 'name_desc':
+            destinations.sort(key=lambda x: (x.get('name') or '').lower(), reverse=True)
+    except Exception:
+        # If sorting fails for any reason, silently continue with unsorted results
+        pass
+
     context = {
         'user': user_obj,
         'profile': profile,
         'destinations': destinations,
         'query': query,
         'category': category,
+        'sort': sort,
     }
     return render(request, 'dashboard.html', context)
 
@@ -98,7 +130,7 @@ def profile_view(request):
     try:
         # Fetch the data needed for the lists
         # Note: This fetches destinations for *all* users.
-        response = supabase.table("destination").select("category, name, image_url").execute()
+        response = supabase.table("destination").select("category, name, destination_image").execute()
         
         if response.data:
             all_destinations = response.data

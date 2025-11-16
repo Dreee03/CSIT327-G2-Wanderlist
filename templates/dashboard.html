@@ -17,7 +17,7 @@
       <a href="#" class="nav-link active">Dashboard</a>
       <a href="{% url 'destination:list' %}" class="nav-link">Destinations</a>
       <a href="{% url 'my_lists' %}" class="nav-link">My Maps</a>
-      <a href="#" class="nav-link">Explore</a>
+      <a href="{% url 'destination:explore' %}" class="nav-link">Explore</a>
     </div>
 
     <div class="nav-right">
@@ -67,6 +67,14 @@
         <option value="Visited">Visited</option>
         <option value="Dreaming">Dreaming</option>
       </select>
+
+        <select id="sortSelect" style="padding:12px 15px; border-radius:8px; border:1px solid #ccc; font-size:16px;">
+          <option value="">Sort (None)</option>
+          <option value="date_desc">Date Added (Newest first)</option>
+          <option value="date_asc">Date Added (Oldest first)</option>
+          <option value="name_asc">Alphabetical (A–Z)</option>
+          <option value="name_desc">Alphabetical (Z–A)</option>
+        </select>
 
       <button 
         id="searchButton"
@@ -144,6 +152,7 @@
     const cards = document.querySelectorAll(".destination-card");
     const searchInput = document.getElementById("searchInput");
     const categoryFilter = document.getElementById("categoryFilter");
+    const sortSelect = document.getElementById("sortSelect");
     const searchButton = document.getElementById("searchButton");
 
     function filterDestinations() {
@@ -182,6 +191,20 @@
       }
       noMsg.style.display = visibleCount === 0 ? "block" : "none";
     }
+
+        // When sort changes, reload page preserving query and category so server-side sorting is applied
+        if (sortSelect) {
+          // Set initial value from server-provided context if present
+          try { sortSelect.value = '{{ sort|default:"" }}'; } catch(e) {}
+          sortSelect.addEventListener('change', function(){
+            const params = new URLSearchParams(window.location.search);
+            params.set('q', searchInput.value || '');
+            params.set('category', categoryFilter.value || '');
+            params.set('sort', sortSelect.value || '');
+            // Trigger a GET reload with sort applied
+            window.location.search = params.toString();
+          });
+        }
 
     filterButtons.forEach(button => {
       button.addEventListener("click", () => {

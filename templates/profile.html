@@ -314,7 +314,7 @@
           <ul class="modal-destination-list">
             {% for dest in planned_destinations %}
               <li class="modal-dest-item">
-                <img src="{{ dest.image_url|default:'/static/images/newyork.jpg' }}" class="modal-dest-img" alt="{{ dest.name }}">
+                <img src="{{ dest.destination_image|default:'/static/images/newyork.jpg' }}" class="modal-dest-img" alt="{{ dest.name }}">
                 <span>{{ dest.name }}</span>
               </li>
             {% empty %}
@@ -337,7 +337,7 @@
           <ul class="modal-destination-list">
             {% for dest in visited_destinations %}
               <li class="modal-dest-item">
-                <img src="{{ dest.image_url|default:'/static/images/paris.jpg' }}" class="modal-dest-img" alt="{{ dest.name }}">
+                <img src="{{ dest.destination_image|default:'/static/images/paris.jpg' }}" class="modal-dest-img" alt="{{ dest.name }}">
                 <span>{{ dest.name }}</span>
               </li>
             {% empty %}
@@ -360,7 +360,7 @@
           <ul class="modal-destination-list">
             {% for dest in dreaming_destinations %}
               <li class="modal-dest-item">
-                <img src="{{ dest.image_url|default:'/static/images/tokyo.jpg' }}" class="modal-dest-img" alt="{{ dest.name }}">
+                <img src="{{ dest.destination_image|default:'/static/images/tokyo.jpg' }}" class="modal-dest-img" alt="{{ dest.name }}">
                 <span>{{ dest.name }}</span>
               </li>
             {% empty %}
