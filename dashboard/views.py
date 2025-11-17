@@ -115,6 +115,7 @@ def profile_view(request):
 
     username = request.session.get('logged_in_username', 'User')
     user_obj = SupabaseUser(username=username, is_authenticated=True)
+    custom_user_id = request.session.get('custom_user_id')
 
     # This will now find the profile created during registration
     profile, created = UserProfile.objects.get_or_create(username=username)
@@ -130,7 +131,7 @@ def profile_view(request):
     try:
         # Fetch the data needed for the lists
         # Note: This fetches destinations for *all* users.
-        response = supabase.table("destination").select("category, name, destination_image").execute()
+        response = supabase.table("destination").select("category, name, destination_image").eq("user_id", custom_user_id).execute()
         
         if response.data:
             all_destinations = response.data
