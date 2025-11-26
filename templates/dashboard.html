@@ -1,0 +1,323 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | WanderList</title>
+  <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}?v=6">
+</head>
+<body>
+
+  <!-- ✅ Navbar -->
+  <header class="navbar">
+    <div class="nav-left">
+      <a href="#" class="logo-text">WanderList</a>
+      <a href="#" class="nav-link active">Dashboard</a>
+      <a href="{% url 'destination:list' %}" class="nav-link">Destinations</a>
+      <a href="{% url 'my_lists' %}" class="nav-link">My Maps</a>
+      <a href="{% url 'destination:explore' %}" class="nav-link">Explore</a>
+    </div>
+
+    <div class="nav-right">
+      {% static 'images/profile.jpg' as default_profile %}
+      <a href="{% url 'profile' %}">
+        <img class="profile" src="{{ profile.profile_pic.url|default:default_profile }}" alt="{{ user.username }}">
+      </a>
+    </div>
+  </header>
+
+  <!-- ✅ Flash Messages -->
+  {% if messages %}
+  <div class="message-container">
+    {% for message in messages %}
+      <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-error{% endif %}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- ✅ Main Section -->
+  <main class="main-content">
+
+    <!-- ✅ DAILY QUOTE CARD (UPDATED) -->
+    <div class="quote-card">
+      <h3>🌟 Daily Quote</h3>
+
+      <p id="dailyQuote" class="fade">Loading quote...</p>
+
+      <p id="quoteError" style="display:none;" class="quote-error">
+        Failed to load new quote.
+      </p>
+
+      <button id="newQuoteBtn" class="quote-btn">New Quote</button>
+    </div>
+
+    <div class="top-main">
+      <div class="heading">
+        <h2>All Destinations</h2>
+        <p class="subtext">Manage your travel destinations and personal notes</p>
+      </div>
+    </div>
+
+    <!-- Search + Filter Bar -->
+    <div class="search-filter-bar" style="display:flex; gap:10px; align-items:center; margin-bottom:20px; flex-wrap: wrap;">
+      <input 
+        type="text" 
+        id="searchInput"
+        placeholder="Search destinations..." 
+        style="flex:1; padding:12px 15px; border-radius:8px; border:1px solid #ccc; font-size:16px;"
+      >
+
+      <select 
+        id="categoryFilter"
+        style="padding:12px 15px; border-radius:8px; border:1px solid #ccc; font-size:16px;"
+      >
+        <option value="">All Categories</option>
+        <option value="Planned">Planned</option>
+        <option value="Visited">Visited</option>
+        <option value="Dreaming">Dreaming</option>
+      </select>
+
+      <select id="sortSelect" style="padding:12px 15px; border-radius:8px; border:1px solid #ccc; font-size:16px;">
+        <option value="">Sort (None)</option>
+        <option value="date_desc">Date Added (Newest first)</option>
+        <option value="date_asc">Date Added (Oldest first)</option>
+        <option value="name_asc">Alphabetical (A–Z)</option>
+        <option value="name_desc">Alphabetical (Z–A)</option>
+      </select>
+
+      <button 
+        id="searchButton"
+        style="background-color:#007bff; color:white; border:none; padding:12px 25px; border-radius:8px; cursor:pointer; font-size:16px;"
+      >
+        🔍 Search
+      </button>
+    </div>
+
+    <!-- Category Filters -->
+    <div class="filters">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="planned">Planned</button>
+      <button class="filter-btn" data-filter="visited">Visited</button>
+      <button class="filter-btn" data-filter="dreaming">Dreaming</button>
+    </div>
+
+    <!-- Destination Cards -->
+    <div class="destination-grid">
+      {% for destination in destinations %}
+      <div class="destination-card" data-category="{{ destination.category|lower }}">
+        <div class="card-gradient"></div>
+
+        {% if destination.destination_image %}
+          <img src="{{ destination.destination_image }}" alt="{{ destination.name }}" class="card-img">
+        {% else %}
+          <div class="no-image">No Image</div>
+        {% endif %}
+
+        <div class="card-body">
+          <h5 class="card-title">{{ destination.name }}</h5>
+
+          {% if destination.city and destination.country %}
+            <p class="card-location">{{ destination.city }}, {{ destination.country }}</p>
+          {% endif %}
+
+          {% if destination.description %}
+            <p class="card-description">{{ destination.description|truncatechars:100 }}</p>
+          {% endif %}
+
+          <!-- Notes Section -->
+          <div class="card-notes" style="margin-top:10px; background:#f9f9f9; padding:10px; border-radius:8px;">
+            <strong>📝 Notes:</strong>
+            {% if destination.notes %}
+              <p style="margin-top:5px; white-space:pre-wrap;">{{ destination.notes|linebreaksbr|truncatechars:150 }}</p>
+            {% else %}
+              <p style="margin-top:5px; color:#888;">No notes added yet.</p>
+            {% endif %}
+          </div>
+
+          {% if destination.category %}
+            <span class="card-badge">{{ destination.category }}</span>
+          {% endif %}
+
+          <div class="card-actions">
+            <a href="{% url 'destination:edit' destination.destinationID %}" class="btn-edit">Edit</a>
+            <form method="POST" action="{% url 'destination:delete' destination.destinationID %}">
+              {% csrf_token %}
+              <button type="submit" class="btn-delete">Delete</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+        <p class="no-destinations">No destinations added yet.</p>
+      {% endfor %}
+    </div>
+
+  </main>
+
+  <!-- JS -->
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+
+    /* ===============================
+          DAILY QUOTE SYSTEM
+    =============================== */
+
+    const quotes = [
+      "Travel is the only thing you buy that makes you richer.",
+      "The journey matters more than the destination.",
+      "Adventure may hurt you but monotony will kill you.",
+      "Jobs fill your pockets, adventures fill your soul.",
+      "Life is short and the world is wide.",
+      "Wander often, wonder always.",
+      "Collect moments, not things.",
+      "Travel far enough, you meet yourself.",
+      "Dream. Explore. Discover."
+    ];
+
+    const quoteText = document.getElementById("dailyQuote");
+    const errorText = document.getElementById("quoteError");
+    const newQuoteBtn = document.getElementById("newQuoteBtn");
+
+    function getRandomQuote() {
+      if (Math.random() < 0.1) throw new Error("Failed fetch");
+      return quotes[Math.floor(Math.random() * quotes.length)];
+    }
+
+    function displayQuote(quote) {
+      quoteText.classList.remove("fade");
+      void quoteText.offsetWidth;
+      quoteText.classList.add("fade");
+
+      quoteText.innerText = quote;
+      localStorage.setItem("dailyQuote", quote);
+    }
+
+    function loadDailyQuote() {
+      const today = new Date().toDateString();
+      const storedDay = localStorage.getItem("quoteDay");
+
+      if (storedDay !== today) {
+        try {
+          const newQuote = getRandomQuote();
+          localStorage.setItem("quoteDay", today);
+          displayQuote(newQuote);
+          errorText.style.display = "none";
+        } catch {
+          errorText.style.display = "block";
+        }
+      } else {
+        quoteText.innerText = localStorage.getItem("dailyQuote");
+      }
+    }
+
+    newQuoteBtn.addEventListener("click", () => {
+      try {
+        const newQuote = getRandomQuote();
+        displayQuote(newQuote);
+        errorText.style.display = "none";
+      } catch {
+        errorText.style.display = "block";
+      }
+    });
+
+    loadDailyQuote();
+
+
+    /* ===============================
+       SEARCH + FILTER (UNCHANGED)
+    =============================== */
+
+    const filterButtons = document.querySelectorAll(".filter-btn");
+    const cards = document.querySelectorAll(".destination-card");
+    const searchInput = document.getElementById("searchInput");
+    const categoryFilter = document.getElementById("categoryFilter");
+
+    function filterDestinations() {
+      const searchValue = searchInput.value.toLowerCase();
+      const selectedCategory = categoryFilter.value.toLowerCase();
+      const activeButton = document.querySelector(".filter-btn.active");
+      const buttonCategory = activeButton ? activeButton.dataset.filter : "all";
+
+      cards.forEach(card => {
+        const name = card.querySelector(".card-title").textContent.toLowerCase();
+        const category = card.dataset.category.toLowerCase();
+
+        const matchesName = searchValue === "" || name.startsWith(searchValue);
+        const matchesCategory =
+          (selectedCategory === "" || category === selectedCategory) &&
+          (buttonCategory === "all" || category === buttonCategory);
+
+        card.style.display = matchesName && matchesCategory ? "block" : "none";
+      });
+    }
+
+    filterButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        filterButtons.forEach(btn => btn.classList.remove("active"));
+        button.classList.add("active");
+        filterDestinations();
+      });
+    });
+
+    searchInput.addEventListener("input", filterDestinations);
+    categoryFilter.addEventListener("change", filterDestinations);
+
+  });
+  </script>
+
+<!-- CSS -->
+<style>
+.quote-card {
+  background: linear-gradient(135deg, #4a90e2, #6dd5fa);
+  color: white;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+.quote-card h3 {
+  margin-bottom: 10px;
+}
+.quote-card p {
+  font-size: 16px;
+  font-style: italic;
+}
+
+/* Fade Animation */
+.fade {
+  animation: fadeIn 0.6s ease-in-out;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Button */
+.quote-btn {
+  margin-top: 12px;
+  background-color: white;
+  color: #007bff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+}
+.quote-btn:hover {
+  background:#E8F0FF;
+}
+
+/* Error */
+.quote-error {
+  color:#FFD6D6;
+  font-size:14px;
+  margin-top:8px;
+}
+</style>
+
+</body>
+</html>

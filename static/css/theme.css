@@ -1,0 +1,138 @@
+/* WanderList Theme: Coastal Blues (5-color palette) */
+:root {
+  /* Core palette extracted from user image */
+  --wl-deep: #0e3a5b;   /* deep ocean blue */
+  --wl-teal: #10b7c4;   /* tropical teal */
+  --wl-blue: #3ba6ff;   /* bright sky blue */
+  --wl-sky: #a6c9f3;    /* light sky blue */
+  --wl-ice: #e4ecf7;    /* icy blue-gray */
+
+  /* Derived theme tokens */
+  --wl-bg: var(--wl-ice);
+  --wl-surface: #ffffff;
+  --wl-text: #0c2f47;
+  --wl-muted: #5b7f78;
+  --wl-border: #d7e2f0;
+  --wl-primary: var(--wl-blue);
+  --wl-primary-700: #2e8ae6;
+  --wl-primary-50: #edf5ff;
+  --wl-accent: var(--wl-teal);
+  --wl-danger: #f87171;
+  --wl-radius: 14px;
+  --wl-shadow: 0 8px 24px rgba(14, 58, 91, 0.08);
+
+  /* Typography */
+  --wl-font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --wl-font-size-base: 16px;
+  --wl-font-size-sm: 14px;
+  --wl-font-size-lg: 18px;
+  --wl-font-size-xl: 20px;
+  --wl-font-size-2xl: 24px;
+  --wl-font-weight-normal: 400;
+  --wl-font-weight-medium: 500;
+  --wl-font-weight-semibold: 600;
+  --wl-font-weight-bold: 700;
+}
+
+body { 
+  background: var(--wl-bg) !important; 
+  color: var(--wl-text) !important; 
+  font-family: var(--wl-font-family) !important;
+  font-size: var(--wl-font-size-base) !important;
+  font-weight: var(--wl-font-weight-normal) !important;
+}
+
+/* Typography consistency */
+h1, h2, h3, h4, h5, h6 { 
+  font-family: var(--wl-font-family) !important; 
+  font-weight: var(--wl-font-weight-bold) !important; 
+  color: var(--wl-text) !important;
+}
+
+h1 { font-size: var(--wl-font-size-2xl) !important; }
+h2 { font-size: var(--wl-font-size-xl) !important; }
+h3 { font-size: var(--wl-font-size-lg) !important; }
+
+p, span, div, a, button, input, textarea, select { 
+  font-family: var(--wl-font-family) !important; 
+}
+
+.navbar, .sidebar { font-family: var(--wl-font-family) !important; }
+.navbar .logo-text, .navbar a.logo-text, .sidebar .logo, .navbar-brand, .logo { 
+  font-family: var(--wl-font-family) !important; 
+  font-weight: var(--wl-font-weight-bold) !important; 
+}
+
+/* Override existing styles with theme colors */
+.navbar { background: linear-gradient(90deg, var(--wl-deep), var(--wl-blue)) !important; color: #eaf6ff !important; }
+.navbar .nav-link { color: #dff1ff !important; }
+.navbar .nav-link.active, .navbar .nav-link:hover { color: var(--wl-sky) !important; background: rgba(255,255,255,0.1) !important; }
+.navbar .logo-text, .navbar a.logo-text { color: #ffffff !important; font-weight: 700 !important; }
+.navbar .nav-left a { color: #dff1ff !important; }
+.navbar .nav-left a.logo-text { color: #ffffff !important; }
+.sidebar .logo { color: #ffffff !important; font-weight: 700 !important; }
+.navbar-brand { color: #ffffff !important; font-weight: 700 !important; }
+.logo { color: #ffffff !important; font-weight: 700 !important; }
+
+.sidebar { background: var(--wl-deep) !important; color: #e6f0fa !important; }
+.sidebar a { color: #cfe6fb !important; }
+.sidebar a.active, .sidebar a:hover { color: #ffffff !important; background: rgba(255,255,255,0.08) !important; }
+
+.btn-primary { background: var(--wl-primary) !important; color: #fff !important; }
+.btn-primary:hover { background: var(--wl-primary-700) !important; }
+
+.filter-btn { background: var(--wl-primary) !important; color: #fff !important; }
+.filter-btn:hover { background: var(--wl-primary-700) !important; }
+
+.destination-card { background: var(--wl-surface) !important; }
+.card-badge { background: var(--wl-primary-50) !important; color: var(--wl-primary) !important; }
+
+.btn-edit { background-color: var(--wl-teal) !important; }
+.btn-delete { background-color: var(--wl-danger) !important; }
+
+/* Cards */
+.wl-card {
+  background: var(--wl-surface);
+  border: 1px solid var(--wl-border);
+  border-radius: var(--wl-radius);
+  box-shadow: var(--wl-shadow);
+}
+
+/* Buttons */
+.wl-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 8px; border: 1px solid transparent; cursor: pointer;
+  border-radius: 12px; padding: 10px 16px; font-weight: 600;
+  background: var(--wl-primary); color: #062234;
+  box-shadow: 0 6px 18px rgba(59, 166, 255, 0.25);
+}
+.wl-btn:hover { background: var(--wl-primary-700); color:#e6fffa; }
+.wl-btn.outline { background:#fff; color: var(--wl-primary); border-color: var(--wl-primary); box-shadow:none; }
+.wl-btn.outline:hover { background: var(--wl-primary-50); }
+.wl-btn.danger { background: var(--wl-danger); color:#fff; box-shadow: 0 4px 14px rgba(248, 113, 113, 0.25); }
+
+/* Inputs */
+.wl-input, .wl-select, .wl-textarea {
+  width: 100%; padding: 10px 12px; border-radius: 10px;
+  border: 1px solid var(--wl-border); background: #fff; color: var(--wl-text);
+}
+.wl-input:focus, .wl-select:focus, .wl-textarea:focus { outline: none; border-color: var(--wl-primary); box-shadow: 0 0 0 3px rgba(32,178,170,0.18); }
+
+/* Badges */
+.wl-badge { display:inline-block; padding:4px 10px; border-radius:999px; font-size:12px; border:1px solid var(--wl-border); background:#fff; color:var(--wl-muted); }
+.wl-badge.primary { background: var(--wl-primary-50); color: var(--wl-primary); border-color: rgba(37,99,235,0.25); }
+
+/* Navbar simplified baseline (for pages with top nav) */
+.wl-navbar { background: linear-gradient(90deg, var(--wl-deep), var(--wl-blue)); color:#eaf6ff; }
+.wl-navbar .nav-link { color:#dff1ff; }
+.wl-navbar .nav-link.active, .wl-navbar .nav-link:hover { color:#ffffff; }
+
+/* Sidebar baseline (for pages with aside) */
+.wl-sidebar { background: var(--wl-deep); color:#e6f0fa; }
+.wl-sidebar a { color:#cfe6fb; }
+.wl-sidebar a.active, .wl-sidebar a:hover { color:#ffffff; background: rgba(255,255,255,0.08); }
+
+/* Utility spacing */
+.wl-container { max-width: 1200px; margin: 0 auto; padding: 16px; }
+.wl-stack { display:flex; gap:12px; flex-wrap:wrap; }
+

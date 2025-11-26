@@ -1,0 +1,307 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Explore | WanderList</title>
+  <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+  <link rel="stylesheet" href="{% static 'css/destination.css' %}">
+  <style>
+    .explore-hero { padding: 36px 20px; text-align:center; }
+    /* Fixed-width cards laid out left-to-right and centered */
+    .explore-grid {display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:24px; padding: 20px 0; width:100%;}
+    .explore-card { border-radius:12px; overflow:hidden; box-shadow:0 6px 18px rgba(0,0,0,0.08); background:#fff; }
+    .explore-card img { width:100%; height:180px; object-fit:cover; }
+    .explore-card .body { padding:16px; }
+    .explore-card h4 { margin:0 0 8px 0; }
+    .explore-card p { color:#556; font-size:0.95rem; margin-bottom:12px; }
+    .card-actions { display:flex; justify-content:space-between; align-items:center; gap:8px; }
+    .btn-add { background:#007bff; color:#fff; padding:8px 12px; border-radius:8px; text-decoration:none; }
+
+    /* Floating category chooser */
+    .floating-chooser {
+      position: absolute; background: #fff; border:1px solid rgba(0,0,0,0.06); box-shadow: 0 8px 24px rgba(0,0,0,0.12); border-radius:10px; padding:8px; z-index:1200;
+      display:flex; gap:8px; align-items:center;
+    }
+    .chooser-btn { padding:6px 10px; border-radius:8px; border:none; cursor:pointer; font-weight:600 }
+    .chooser-btn.planned { background: #f0f8ff; color: var(--wl-primary); }
+    .chooser-btn.visited { background: #eefbf9; color: var(--wl-accent); }
+    .chooser-btn.dreaming { background: #fff7ed; color: #f59e0b; }
+
+    /* Right mini panel */
+    .right-panel { position:relative; }
+    .mini-panel { padding:14px; border-radius:12px; background:var(--wl-surface); border:1px solid var(--wl-border); box-shadow:var(--wl-shadow); }
+    .mini-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+    .mini-count { font-weight:700; }
+
+    /* Make navbar fixed across the top and full-width */
+    .navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 2000; display:flex; align-items:center; justify-content:space-between; padding:12px 24px; }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar (same as dashboard) -->
+  <header class="navbar">
+    <div class="nav-left">
+      <a href="#" class="logo-text">WanderList</a>
+      <a href="#" class="nav-link active">Dashboard</a>
+      <a href="{% url 'destination:list' %}" class="nav-link">Destinations</a>
+      <a href="{% url 'my_lists' %}" class="nav-link">My Maps</a>
+      <a href="{% url 'destination:explore' %}" class="nav-link">Explore</a>
+    </div>
+
+    <div class="nav-right">
+      {% static 'images/profile.jpg' as default_profile %}
+      {% if profile %}
+        <a href="{% url 'profile' %}">
+          <img class="profile" src="{{ profile.profile_pic.url|default:default_profile }}" alt="{{ user.username }}">
+        </a>
+      {% else %}
+        <a href="{% url 'profile' %}">
+          <img class="profile" src="{{ default_profile }}" alt="Profile">
+        </a>
+      {% endif %}
+    </div>
+  </header>
+
+  <main class="wl-container" style="padding-top:88px;">
+
+    <div style="display:grid; grid-template-columns: 300px 1fr 300px; gap:24px; align-items:start;">
+
+      <!-- Left column: hero / intro -->
+      <aside style="padding:24px 12px;">
+        <div class="explore-hero" style="text-align:left; padding:0;">
+          <h1 style="font-size:28px; margin-bottom:8px;">Explore Popular Places</h1>
+        </div>
+      </aside>
+
+      <!-- Center: cards grid -->
+      <section class="explore-grid">
+      <!-- Example cards: name, city, country, image, description -->
+      <article class="explore-card" data-name="Paris" data-city="Paris" data-country="France">
+        <img src="https://images.unsplash.com/photo-1508057198894-247b23fe5ade?auto=format&fit=crop&w=1200&q=80" alt="Paris">
+        <div class="body">
+          <h4>Paris</h4>
+          <p>The City of Lights: art, cafés, and timeless architecture. Perfect for romantic strolls and museums.</p>
+          <div class="card-actions">
+            <span class="muted">France</span>
+            <a class="btn-add" href="#" data-bs-toggle="modal" data-bs-target="#addModal">Add</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="explore-card" data-name="Tokyo" data-city="Tokyo" data-country="Japan">
+        <img src="https://images.unsplash.com/photo-1549692520-acc6669e2f0c?auto=format&fit=crop&w=1200&q=80" alt="Tokyo">
+        <div class="body">
+          <h4>Tokyo</h4>
+          <p>A dazzling blend of the modern and the traditional — neon districts, temples, and incredible food.</p>
+          <div class="card-actions">
+            <span class="muted">Japan</span>
+            <a class="btn-add" href="#" data-bs-toggle="modal" data-bs-target="#addModal">Add</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="explore-card" data-name="New York" data-city="New York" data-country="USA">
+        <img src="https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=1200&q=80" alt="New York">
+        <div class="body">
+          <h4>New York</h4>
+          <p>The city that never sleeps — museums, skyline views, and an endless variety of neighborhoods to explore.</p>
+          <div class="card-actions">
+            <span class="muted">USA</span>
+            <a class="btn-add" href="#" data-bs-toggle="modal" data-bs-target="#addModal">Add</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="explore-card" data-name="Santorini" data-city="Oia" data-country="Greece">
+        <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80" alt="Santorini">
+        <div class="body">
+          <h4>Santorini</h4>
+          <p>Iconic whitewashed towns and caldera views — perfect for sunsets and relaxing getaways.</p>
+          <div class="card-actions">
+            <span class="muted">Greece</span>
+            <a class="btn-add" href="#" data-bs-toggle="modal" data-bs-target="#addModal">Add</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="explore-card" data-name="Reykjavík" data-city="Reykjavík" data-country="Iceland">
+        <img src="https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1200&q=80" alt="Reykjavík">
+        <div class="body">
+          <h4>Reykjavík</h4>
+          <p>Gateway to glaciers, hot springs and the Northern Lights — adventurous landscapes await.</p>
+          <div class="card-actions">
+            <span class="muted">Iceland</span>
+            <a class="btn-add" href="#" data-bs-toggle="modal" data-bs-target="#addModal">Add</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- Additional sample cards -->
+      <article class="explore-card" data-name="Bali" data-city="Ubud" data-country="Indonesia">
+        <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1200&q=80" alt="Bali">
+        <div class="body">
+          <h4>Bali</h4>
+          <p>Lush rice terraces, temples, and surf — an island of culture and beaches.</p>
+          <div class="card-actions">
+            <span class="muted">Indonesia</span>
+            <a class="btn-add" href="#">Add</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="explore-card" data-name="Sydney" data-city="Sydney" data-country="Australia">
+        <img src="https://images.unsplash.com/photo-1506917988795-2d2a1d0f6b2f?auto=format&fit=crop&w=1200&q=80" alt="Sydney">
+        <div class="body">
+          <h4>Sydney</h4>
+          <p>Harbour views, vibrant beaches and iconic architecture — great for city and coast.</p>
+          <div class="card-actions">
+            <span class="muted">Australia</span>
+            <a class="btn-add" href="#">Add</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="explore-card" data-name="Cape Town" data-city="Cape Town" data-country="South Africa">
+        <img src="https://images.unsplash.com/photo-1508609349937-5ec4ae374ebf?auto=format&fit=crop&w=1200&q=80" alt="Cape Town">
+        <div class="body">
+          <h4>Cape Town</h4>
+          <p>Coastal scenery, Table Mountain, and wineries — a diverse destination.</p>
+          <div class="card-actions">
+            <span class="muted">South Africa</span>
+            <a class="btn-add" href="#">Add</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="explore-card" data-name="Barcelona" data-city="Barcelona" data-country="Spain">
+        <img src="https://images.unsplash.com/photo-1467269204594-9661b134dd2b?auto=format&fit=crop&w=1200&q=80" alt="Barcelona">
+        <div class="body">
+          <h4>Barcelona</h4>
+          <p>Gaudí architecture, tapas and beaches — a city full of life.</p>
+          <div class="card-actions">
+            <span class="muted">Spain</span>
+            <a class="btn-add" href="#">Add</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="explore-card" data-name="Lisbon" data-city="Lisbon" data-country="Portugal">
+        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=1200&q=80" alt="Lisbon">
+        <div class="body">
+          <h4>Lisbon</h4>
+          <p>Hills, trams and seaside viewpoints — colorful streets and pastries.</p>
+          <div class="card-actions">
+            <span class="muted">Portugal</span>
+            <a class="btn-add" href="#">Add</a>
+          </div>
+        </div>
+      </article>
+
+    </section>
+
+      <!-- Right column: Mini status panel (shows counts when adding) -->
+      <aside class="right-panel" style="padding:12px;">
+        <div class="mini-panel">
+          <h4 style="margin-top:0;">Quick Stats</h4>
+          <div class="mini-row"><span>Planned</span><span class="mini-count" id="count-planned">0</span></div>
+          <div class="mini-row"><span>Visited</span><span class="mini-count" id="count-visited">0</span></div>
+          <div class="mini-row"><span>Dreaming</span><span class="mini-count" id="count-dreaming">0</span></div>
+          <hr>
+          <div style="font-size:0.9rem; color:var(--wl-muted);">Click Add on any card, choose a list, and it'll be sent to your Destinations.</div>
+        </div>
+
+        <!-- Hidden form used for quick add (submitted when category chosen) -->
+        <form id="hidden_add_form" method="POST" action="{% url 'destination:create' %}" style="display:none;">
+          {% csrf_token %}
+          <input name="name" id="hidden_name">
+          <input name="city" id="hidden_city">
+          <input name="country" id="hidden_country">
+          <input name="destination_image" id="hidden_image">
+          <input name="latitude" id="hidden_lat" value="0">
+          <input name="longitude" id="hidden_lon" value="0">
+          <input name="notes" id="hidden_notes" value="">
+          <input name="category" id="hidden_category">
+        </form>
+      </aside>
+
+    </div>
+  </main>
+
+  <!-- Modal removed: using floating quick-add chooser and hidden form instead -->
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Floating chooser + quick-add behavior
+    (function(){
+      // Create chooser element
+      const chooser = document.createElement('div');
+      chooser.className = 'floating-chooser';
+      chooser.style.display = 'none';
+      chooser.innerHTML = `
+        <button class="chooser-btn planned" data-cat="Planned">Planned</button>
+        <button class="chooser-btn visited" data-cat="Visited">Visited</button>
+        <button class="chooser-btn dreaming" data-cat="Dreaming">Dreaming</button>
+        <button class="chooser-btn" data-cat="cancel" style="background:#fff;border:1px solid var(--wl-border);">Cancel</button>
+      `;
+      document.body.appendChild(chooser);
+
+      let activeCard = null;
+
+      function hideChooser(){ chooser.style.display='none'; activeCard = null; }
+
+      // Wire card add buttons
+      document.querySelectorAll('.btn-add').forEach(btn => {
+        btn.addEventListener('click', function(ev){
+          ev.preventDefault();
+          const card = ev.target.closest('.explore-card');
+          activeCard = card;
+
+          // prefill hidden form fields
+          document.getElementById('hidden_name').value = card.dataset.name || '';
+          document.getElementById('hidden_city').value = card.dataset.city || '';
+          document.getElementById('hidden_country').value = card.dataset.country || '';
+          const img = card.querySelector('img');
+          if (img) document.getElementById('hidden_image').value = img.getAttribute('src');
+
+          // position chooser near the clicked button
+          const rect = ev.target.getBoundingClientRect();
+          const scrollY = window.scrollY || window.pageYOffset;
+          chooser.style.top = (rect.top + rect.height + scrollY + 8) + 'px';
+          chooser.style.left = (rect.left) + 'px';
+          chooser.style.display = 'flex';
+        });
+      });
+
+      // Choose category or cancel
+      chooser.addEventListener('click', function(ev){
+        const btn = ev.target.closest('.chooser-btn');
+        if(!btn) return;
+        const cat = btn.dataset.cat;
+        if(cat === 'cancel') { hideChooser(); return; }
+
+        // set category and submit hidden form
+        document.getElementById('hidden_category').value = cat;
+
+        // optimistic UI update for counts
+        const countEl = document.getElementById('count-' + cat.toLowerCase());
+        if(countEl){ countEl.textContent = (parseInt(countEl.textContent || '0',10) + 1).toString(); }
+
+        // submit the form (will follow normal redirect on success)
+        const form = document.getElementById('hidden_add_form');
+        form.submit();
+      });
+
+      // hide chooser when clicking outside
+      document.addEventListener('click', function(ev){
+        if(!chooser.contains(ev.target) && !ev.target.classList.contains('btn-add')){
+          hideChooser();
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>

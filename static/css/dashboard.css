@@ -1,0 +1,396 @@
+/* ================================================
+   DASHBOARD PAGE
+================================================ */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--wl-bg);
+  margin: 0;
+  color: var(--wl-text);
+  overflow-x: hidden; /* removes horizontal scroll */
+}
+
+/* ================================================
+   NAVBAR
+================================================ */
+header.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: nowrap; /* prevents wrapping of links and profile */
+  padding: 0.75rem 2rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  background: var(--wl-surface);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  overflow-x: hidden;
+}
+.nav-right {
+  display: flex;
+  align-items: center;
+  min-width: 40px; /* ensures profile is visible */
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  flex: 1 1 auto; /* allow left section to shrink slightly */
+}
+
+.nav-left a,
+.nav-left a.logo-text {
+  text-decoration: none;
+  color: var(--wl-text);
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.nav-left a.logo-text {
+  font-weight: 700;
+  font-size: 1.3rem;
+}
+
+.nav-left a.active {
+  color: var(--wl-primary);
+  background: var(--wl-primary-50);
+}
+
+.nav-left a:hover {
+  background: var(--wl-sky);
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  margin-left: 0; /* no extra margin needed */
+  flex-shrink: 0; /* ensure profile doesn't shrink */
+}
+
+.nav-right img.profile {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--wl-border);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  margin-left: 12px; /* slight spacing from left section */
+}
+
+.nav-right img.profile:hover {
+  transform: scale(1.05);
+}
+
+/* ================================================
+   MAIN CONTENT
+================================================ */
+main.main-content {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.top-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.top-main h2 {
+  font-weight: 700;
+  font-size: 1.6rem;
+  margin-bottom: 0.25rem;
+}
+
+.top-main p.subtext {
+  font-size: 0.9rem;
+  color: var(--wl-muted);
+  margin: 0;
+}
+
+/* ================================================
+   FILTER BUTTONS
+================================================ */
+.filters {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.filters .filter-btn {
+  padding: 8px 18px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-align: center;
+  color: #fff;
+}
+
+
+/* Button Colors by Data Attribute */
+.filters .filter-btn[data-filter="all"] {
+  background: #2563EB; /* Blue */
+}
+.filters .filter-btn[data-filter="all"]:hover {
+  background: #1D4ED8;
+}
+
+.filters .filter-btn[data-filter="planned"] {
+  background: #FBBF24; /* Amber */
+  color: #78350F;
+}
+.filters .filter-btn[data-filter="planned"]:hover {
+  background: #F59E0B;
+  color: #fff;
+}
+
+.filters .filter-btn[data-filter="visited"] {
+  background: #10B981; /* Green */
+  color: #064E3B;
+}
+.filters .filter-btn[data-filter="visited"]:hover {
+  background: #059669;
+  color: #fff;
+}
+
+.filters .filter-btn[data-filter="dreaming"] {
+  background: #8B5CF6; /* Purple */
+  color: #312E81;
+}
+.filters .filter-btn[data-filter="dreaming"]:hover {
+  background: #7C3AED;
+  color: #fff;
+}
+
+/* Active Button State */
+.filters .filter-btn.active {
+  outline: 3px solid rgba(0, 0, 0, 0.15);
+  transform: scale(1.05);
+  box-shadow: 0 0 8px rgba(0,0,0,0.2);
+}
+
+.filters .btn-all { background: var(--wl-primary); }
+.filters .btn-all:hover { background: var(--wl-primary-700); }
+.filters .btn-planned { background: var(--wl-accent); color: var(--wl-text); }
+.filters .btn-planned:hover { background: var(--wl-teal); color: #fff; }
+.filters .btn-visited { background: var(--wl-teal); color: #fff; }
+.filters .btn-visited:hover { background: var(--wl-deep); color: #fff; }
+.filters .btn-dreaming { background: var(--wl-sky); color: var(--wl-text); }
+.filters .btn-dreaming:hover { background: var(--wl-blue); color: #fff; }
+
+
+/* ================================================
+   DESTINATION CARDS
+================================================ */
+.destination-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: flex-start; /* align cards left */
+}
+
+.destination-card {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  width: 220px;  /* fixed width */
+  min-height: 240px; /* fixed height */
+  flex-shrink: 0;   /* prevents stretching */
+}
+
+.destination-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+}
+
+/* Card Image */
+.destination-card img.card-img,
+.no-image {
+  height: 120px;
+  width: 100%;
+  object-fit: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* Card Body */
+.card-body {
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-grow: 1;
+}
+
+.card-title { font-size: 1rem; font-weight: 600; margin-bottom: 4px; }
+.card-location,
+.card-description { font-size: 0.85rem; color: #6B7280; margin: 2px 0; }
+.card-description { flex-grow: 1; color: #4B5563; }
+
+.card-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  font-size: 0.7rem;
+  border-radius: 999px;
+  background: var(--wl-primary-50);
+  color: var(--wl-primary);
+  margin-top: 4px;
+}
+
+/* Card Actions */
+.card-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.btn-edit {
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-weight: 500;
+  background-color: var(--wl-teal);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-edit:hover { background-color: var(--wl-deep); }
+
+.btn-delete {
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-weight: 500;
+  background-color: var(--wl-danger);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-delete:hover { background-color: var(--wl-danger); opacity: 0.8; }
+
+/* Empty State */
+.no-destinations {
+  text-align: center;
+  font-size: 14px;
+  color: var(--wl-muted);
+  margin-top: 15px;
+}
+
+/* ================================================
+   RESPONSIVE
+================================================ */
+@media (max-width: 991px) {
+  main.main-content { padding: 1.5rem; }
+}
+
+@media (max-width: 767px) {
+  .destination-card { width: 160px; min-height: 200px; }
+  .destination-card img.card-img,
+  .no-image { height: 90px; }
+}
+/* Highlight active filter button */
+.filters .filter-btn.active {
+  outline: 2px solid #111827;
+  transform: scale(1.05);
+  box-shadow: 0 0 0 3px rgba(0,0,0,0.1);
+}
+/* ================================================
+   DAILY QUOTE CARD
+================================================ */
+
+.quote-card {
+  background: linear-gradient(135deg, #1f2937, #020617);
+  color: white;
+  border-radius: 18px;
+  padding: 20px 24px;
+  margin-bottom: 25px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+  opacity: 0;
+  transform: translateY(12px);
+  animation: fadeInQuote 0.7s ease-out forwards;
+  max-width: 100%;
+}
+
+/* Glow background */
+.quote-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
+  opacity: 0.12;
+  filter: blur(24px);
+  z-index: 0;
+}
+
+/* Foreground content */
+.quote-card-content {
+  position: relative;
+  z-index: 2;
+}
+
+/* Quote text */
+.quote-text {
+  font-size: 1.15rem;
+  font-weight: 500;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+/* Author text */
+.quote-author {
+  font-size: 0.85rem;
+  opacity: 0.8;
+  text-align: right;
+}
+
+/* Hover effect */
+.quote-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 14px 45px rgba(59,130,246,0.45);
+}
+
+/* Refresh button */
+.quote-refresh {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  background: rgba(255,255,255,0.15);
+  border: none;
+  color: white;
+  cursor: pointer;
+  border-radius: 50%;
+  padding: 8px;
+  font-size: 0.9rem;
+  z-index: 3;
+}
+
+.quote-refresh:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+/* Fade animation */
+@keyframes fadeInQuote {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

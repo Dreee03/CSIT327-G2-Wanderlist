@@ -1,0 +1,71 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WanderList - Explore Your World</title>
+  <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="{% url 'home' %}">
+      <img src="{% static 'images/earth-logo.png' %}" alt="WanderList" class="brand-logo" width="36" height="36" style="width:36px;height:36px;">
+      WanderList
+    </a>
+    <div class="nav-buttons">
+      <a class="btn btn-custom" href="{% url 'login' %}">Sign In</a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <video autoplay muted loop playsinline id="hero-video">
+      <source src="{% static 'videos/travel.mp4' %}" type="video/mp4">
+    </video>
+  
+    <div class="content">
+      <h1>Discover. Plan. Wander.</h1>
+      <p>Your personalized travel checklist companion.</p>
+      <a href="{% url 'register' %}" class="btn btn-custom">Get Started</a>
+    </div>
+  </section>
+  
+  
+
+  <!-- Featured Destinations -->
+  <section class="featured-section">
+    <h2>Popular Destinations</h2>
+    <div class="destinations-row">
+      <div class="destination-card">
+        <img src="{% static 'images/paris.jpg' %}" alt="Paris">
+        <div class="card-body">
+          <h5 class="card-title">Paris</h5>
+          <p class="card-text">City of lights, romance, and culture.</p>
+        </div>
+      </div>
+      <div class="destination-card">
+        <img src="{% static 'images/tokyo.jpg' %}" alt="Tokyo">
+        <div class="card-body">
+          <h5 class="card-title">Tokyo</h5>
+          <p class="card-text">Modern vibes with deep traditions.</p>
+        </div>
+      </div>
+      <div class="destination-card">
+        <img src="{% static 'images/newyork.jpg' %}" alt="New York">
+        <div class="card-body">
+          <h5 class="card-title">New York</h5>
+          <p class="card-text">The city that never sleeps.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>© 2025 WanderList. All rights reserved.</footer>
+
+</body>
+</html>

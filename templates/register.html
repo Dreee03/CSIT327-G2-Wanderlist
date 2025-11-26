@@ -1,0 +1,113 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register - WanderList</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+  <link rel="stylesheet" href="{% static 'css/register.css' %}">
+</head>
+<body class="form-page">
+  <div class="container py-4" style="max-width:1100px; width:100%;">
+    <div class="row g-0 wl-register-row" style="background:var(--wl-surface); border-radius:20px; overflow:hidden; box-shadow: var(--wl-shadow);">
+      <div class="wl-register-col visual" id="register-visual" style="background: linear-gradient(160deg, rgba(14,58,91,0.85), rgba(59,166,255,0.6)), url('{% static 'images/paris.jpg' %}') center/cover no-repeat; position:relative; min-height:420px; transition: background-image 0.6s ease;">
+        <div style="position:absolute; inset:0; display:flex; flex-direction:column; justify-content:flex-end; padding:24px; color:#eaf6ff;">
+          <div class="wl-brand" style="display:flex; align-items:center; gap:10px; font-weight:700; font-size:20px;">
+            <span class="wl-logo" aria-hidden="true" style="display:inline-flex;">
+              <img class="wl-logo-img" alt="WanderList globe logo" src="{% static 'images/earth-logo.png' %}">
+            </span>
+            <span>WanderList</span>
+          </div>
+          <div style="margin-top:auto"></div>
+          <h3 class="wl-hero-title" style="margin:0 0 6px 0; font-weight:700;">Capture Moments, Create Memories</h3>
+          <p style="margin:0 0 10px 0; color:#dff1ff;">Plan trips, track destinations, and build your dream map.</p>
+        </div>
+      </div>
+      <div class="wl-register-col form">
+        <div class="form-container" style="box-shadow:none; border-radius:0; max-width:unset;">
+          <h2 class="text-center" style="margin-bottom:10px;">Create an account</h2>
+          <p class="text-center" style="color:var(--wl-muted); margin-bottom:20px;">Already have an account? <a href="{% url 'login' %}">Login</a></p>
+          {% if messages %}
+            <div class="mb-3">
+              {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}" role="alert">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+          <form method="post">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger" role="alert">{{ form.non_field_errors }}</div>
+            {% endif %}
+            
+            <div class="row g-2 mb-3">
+              <div class="col-md-6">
+                {{ form.first_name.label_tag }}{{ form.first_name }}
+                {% if form.first_name.errors %}<div class="text-danger small">{{ form.first_name.errors|striptags }}</div>{% endif %}
+              </div>
+              <div class="col-md-6">
+                {{ form.last_name.label_tag }}{{ form.last_name }}
+                {% if form.last_name.errors %}<div class="text-danger small">{{ form.last_name.errors|striptags }}</div>{% endif %}
+              </div>
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-md-8">
+                {{ form.username.label_tag }}{{ form.username }}
+                {% if form.username.errors %}<div class="text-danger small">{{ form.username.errors|striptags }}</div>{% endif %}
+              </div>
+              <div class="col-md-4">
+                {{ form.age.label_tag }}{{ form.age }}
+                {% if form.age.errors %}<div class="text-danger small">{{ form.age.errors|striptags }}</div>{% endif %}
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              {{ form.email.label_tag }}{{ form.email }}
+              {% if form.email.errors %}<div class="text-danger small">{{ form.email.errors|striptags }}</div>{% endif %}
+            </div>
+            <div class="mb-3">
+              {{ form.password.label_tag }}{{ form.password }}
+              {% if form.password.errors %}<div class="text-danger small">{{ form.password.errors|striptags }}</div>{% endif %}
+            </div>
+            <div class="mb-3">
+              {{ form.password2.label_tag }}{{ form.password2 }}
+              {% if form.password2.errors %}<div class="text-danger small">{{ form.password2.errors|striptags }}</div>{% endif %}
+            </div>
+            <button type="submit" class="btn btn-success w-100">Create account</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function() {
+      var visual = document.getElementById('register-visual');
+      if (!visual) return;
+      var images = [
+        "{% static 'images/paris.jpg' %}",
+        "{% static 'images/tokyo.jpg' %}",
+        "{% static 'images/newyork.jpg' %}"
+      ];
+      var index = 0;
+      function setBackground() {
+        var url = images[index % images.length];
+        var gradient = 'linear-gradient(160deg, rgba(14,58,91,0.85), rgba(59,166,255,0.6))';
+        visual.style.background = gradient + ', url("' + url + '") center/cover no-repeat';
+      }
+      function onResize() {
+        // Prefer brighter image for very small viewports
+        if (window.innerWidth < 576) {
+          index = 1; // tokyo default on small screens
+        }
+        setBackground();
+      }
+      setBackground();
+      window.addEventListener('resize', onResize);
+      // Rotate images every 6 seconds
+      setInterval(function() { index = (index + 1) % images.length; setBackground(); }, 6000);
+    })();
+  </script>
+</body>
+</html>
