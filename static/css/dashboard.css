@@ -23,12 +23,6 @@ header.navbar {
   position: sticky;
   top: 0;
   z-index: 1000;
-  overflow-x: hidden;
-}
-.nav-right {
-  display: flex;
-  align-items: center;
-  min-width: 40px; /* ensures profile is visible */
 }
 
 .nav-left {
@@ -66,8 +60,8 @@ header.navbar {
 .nav-right {
   display: flex;
   align-items: center;
-  margin-left: 0; /* no extra margin needed */
   flex-shrink: 0; /* ensure profile doesn't shrink */
+  margin-left: 0; 
 }
 
 .nav-right img.profile {
@@ -78,7 +72,7 @@ header.navbar {
   border: 1px solid var(--wl-border);
   cursor: pointer;
   transition: transform 0.2s ease;
-  margin-left: 12px; /* slight spacing from left section */
+  margin-left: 12px;
 }
 
 .nav-right img.profile:hover {
@@ -135,7 +129,6 @@ main.main-content {
   color: #fff;
 }
 
-
 /* Button Colors by Data Attribute */
 .filters .filter-btn[data-filter="all"] {
   background: #2563EB; /* Blue */
@@ -173,9 +166,9 @@ main.main-content {
 
 /* Active Button State */
 .filters .filter-btn.active {
-  outline: 3px solid rgba(0, 0, 0, 0.15);
+  outline: 2px solid #111827;
   transform: scale(1.05);
-  box-shadow: 0 0 8px rgba(0,0,0,0.2);
+  box-shadow: 0 0 0 3px rgba(0,0,0,0.1);
 }
 
 .filters .btn-all { background: var(--wl-primary); }
@@ -187,7 +180,6 @@ main.main-content {
 .filters .btn-dreaming { background: var(--wl-sky); color: var(--wl-text); }
 .filters .btn-dreaming:hover { background: var(--wl-blue); color: #fff; }
 
-
 /* ================================================
    DESTINATION CARDS
 ================================================ */
@@ -195,7 +187,7 @@ main.main-content {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
-  justify-content: flex-start; /* align cards left */
+  justify-content: flex-start;
 }
 
 .destination-card {
@@ -206,9 +198,9 @@ main.main-content {
   display: flex;
   flex-direction: column;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
-  width: 220px;  /* fixed width */
-  min-height: 240px; /* fixed height */
-  flex-shrink: 0;   /* prevents stretching */
+  width: 220px;
+  min-height: 240px;
+  flex-shrink: 0;
 }
 
 .destination-card:hover {
@@ -216,7 +208,6 @@ main.main-content {
   box-shadow: 0 8px 16px rgba(0,0,0,0.12);
 }
 
-/* Card Image */
 .destination-card img.card-img,
 .no-image {
   height: 120px;
@@ -228,7 +219,6 @@ main.main-content {
   text-align: center;
 }
 
-/* Card Body */
 .card-body {
   padding: 12px 14px;
   display: flex;
@@ -252,7 +242,6 @@ main.main-content {
   margin-top: 4px;
 }
 
-/* Card Actions */
 .card-actions {
   display: flex;
   justify-content: flex-end;
@@ -285,7 +274,6 @@ main.main-content {
 
 .btn-delete:hover { background-color: var(--wl-danger); opacity: 0.8; }
 
-/* Empty State */
 .no-destinations {
   text-align: center;
   font-size: 14px;
@@ -294,27 +282,8 @@ main.main-content {
 }
 
 /* ================================================
-   RESPONSIVE
-================================================ */
-@media (max-width: 991px) {
-  main.main-content { padding: 1.5rem; }
-}
-
-@media (max-width: 767px) {
-  .destination-card { width: 160px; min-height: 200px; }
-  .destination-card img.card-img,
-  .no-image { height: 90px; }
-}
-/* Highlight active filter button */
-.filters .filter-btn.active {
-  outline: 2px solid #111827;
-  transform: scale(1.05);
-  box-shadow: 0 0 0 3px rgba(0,0,0,0.1);
-}
-/* ================================================
    DAILY QUOTE CARD
 ================================================ */
-
 .quote-card {
   background: linear-gradient(135deg, #1f2937, #020617);
   color: white;
@@ -330,7 +299,6 @@ main.main-content {
   max-width: 100%;
 }
 
-/* Glow background */
 .quote-card::before {
   content: '';
   position: absolute;
@@ -341,13 +309,11 @@ main.main-content {
   z-index: 0;
 }
 
-/* Foreground content */
 .quote-card-content {
   position: relative;
   z-index: 2;
 }
 
-/* Quote text */
 .quote-text {
   font-size: 1.15rem;
   font-weight: 500;
@@ -355,20 +321,17 @@ main.main-content {
   margin-bottom: 10px;
 }
 
-/* Author text */
 .quote-author {
   font-size: 0.85rem;
   opacity: 0.8;
   text-align: right;
 }
 
-/* Hover effect */
 .quote-card:hover {
   transform: scale(1.02);
   box-shadow: 0 14px 45px rgba(59,130,246,0.45);
 }
 
-/* Refresh button */
 .quote-refresh {
   position: absolute;
   top: 10px;
@@ -387,10 +350,22 @@ main.main-content {
   background: rgba(255,255,255,0.3);
 }
 
-/* Fade animation */
 @keyframes fadeInQuote {
   to {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* ================================================
+   RESPONSIVE
+================================================ */
+@media (max-width: 991px) {
+  main.main-content { padding: 1.5rem; }
+}
+
+@media (max-width: 767px) {
+  .destination-card { width: 160px; min-height: 200px; }
+  .destination-card img.card-img,
+  .no-image { height: 90px; }
 }
