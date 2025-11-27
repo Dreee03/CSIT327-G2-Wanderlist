@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'accounts',
     'dashboard',
     'destination',
+    'schedule_events'
 ]
 
 MIDDLEWARE = [
