@@ -4,6 +4,7 @@ from django.shortcuts import redirect
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.static import serve
+from .views import EventDataView
 
 # Redirect root URL to dashboard
 def home_redirect(request):
@@ -16,6 +17,7 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('dashboard/', include('dashboard.urls')),  # Dashboard and daily quote live here
     path('destination/', include('destination.urls')),
+    path('schedule_events', include('schedule_events.urls')),
     
     # Root redirect
     path('', home_redirect),

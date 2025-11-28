@@ -74,6 +74,10 @@ def create_destination(request):
         category = (request.POST.get('category') or '').strip()
         notes = (request.POST.get('notes') or '').strip()  # ✅ Notes field
         user_id = custom_user_id  # Link destination to user
+
+        # Date fields
+        start_trip = (request.POST.get('start_trip') or '').strip()
+        end_trip = (request.POST.get('end_trip') or '').strip()
         
         # ✅ Get latitude and longitude from the form
         latitude = request.POST.get('latitude')
@@ -116,6 +120,8 @@ def create_destination(request):
             'name': name,
             'city': city,
             'country': country,
+            'start_trip': start_trip or None,
+            'end_trip': end_trip or None,
             'description': description or None,
             'category': category,
             'latitude': latitude,   # ✅ Save latitude
@@ -173,6 +179,10 @@ def edit_destination(request, destination_id):
         description = (request.POST.get('description') or '').strip()
         category = (request.POST.get('category') or '').strip()
         notes = (request.POST.get('notes') or '').strip()  # ✅ Notes field
+
+        #Date fields
+        start_trip = (request.POST.get('start_trip') or '').strip()
+        end_trip = (request.POST.get('end_trip') or '').strip()
         
         # ✅ Get latitude and longitude
         latitude = request.POST.get('latitude')
@@ -195,6 +205,8 @@ def edit_destination(request, destination_id):
             'name': name,
             'city': city,
             'country': country,
+            'start_trip': start_trip or None,
+            'end_trip': end_trip or None,
             'category': category,
             'description': description,
             'notes': notes or None,  # ✅ Update notes too

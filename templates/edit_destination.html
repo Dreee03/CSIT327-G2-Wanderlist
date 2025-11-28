@@ -64,6 +64,17 @@
           </div>
         </div>
 
+      <div class="form-grid" id="date-picker-container" style="display: none;">
+        <div>
+          <label for="start_trip">Trip starting date:</label>
+          <input type="text" id="start_trip" name="start_trip" class="date-picker" placeholder="Select start date" value="{{ destination.start_trip|default_if_none:'' }}">
+        </div>
+        <div>
+          <label for="end_trip">Trip ending date:</label>
+          <input type="text" id="end_trip" name="end_trip" class="date-picker" placeholder="Select end date" value="{{ destination.end_trip|default_if_none:'' }}">
+        </div>
+      </div>
+
         <label>Click on the map to set coordinates:</label>
         <div id="picker-map"></div>
 
@@ -106,6 +117,7 @@
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script>
     (function() {
       var latInput = document.getElementById('latitude');
@@ -140,6 +152,59 @@
           marker = L.marker(e.latlng).addTo(map);
         }
       });
+    })();
+
+    // Date Picker Logic
+    (function() {
+      var categorySelect = document.getElementById('category');
+      var datePickerContainer = document.getElementById('date-picker-container');
+      var startTripInput = document.getElementById('start_trip');
+      var endTripInput = document.getElementById('end_trip');
+
+      // Initialize flatpickr instances
+      var startPicker = flatpickr(startTripInput, {
+        dateFormat: 'Y-m-d',
+        minDate: 'today'
+      });
+
+      var endPicker = flatpickr(endTripInput, {
+        dateFormat: 'Y-m-d',
+        minDate: 'today'
+      });
+
+      // Function to update date picker state based on category
+      function updateDatePickerState() {
+        var selectedCategory = categorySelect.value;
+
+        if (selectedCategory === 'Planned') {
+          // Show and enable date pickers for Planned
+          datePickerContainer.style.display = 'grid';
+          startTripInput.disabled = false;
+          endTripInput.disabled = false;
+          startTripInput.required = true;
+          endTripInput.required = true;
+        } else if (selectedCategory === 'Visited') {
+          // Show but disable date pickers for Visited
+          datePickerContainer.style.display = 'grid';
+          startTripInput.disabled = true;
+          endTripInput.disabled = true;
+          startTripInput.required = false;
+          endTripInput.required = false;
+        } else {
+          // Hide date pickers for Dreaming or no selection
+          datePickerContainer.style.display = 'none';
+          startTripInput.disabled = true;
+          endTripInput.disabled = true;
+          startTripInput.required = false;
+          endTripInput.required = false;
+        }
+      }
+
+      // Listen for category changes
+      categorySelect.addEventListener('change', updateDatePickerState);
+
+      // Initialize on page load
+      updateDatePickerState();
     })();
   </script>
 </body>
