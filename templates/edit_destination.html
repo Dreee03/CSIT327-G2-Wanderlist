@@ -7,7 +7,7 @@
   <title>Edit Destination | WanderList</title>
   <link rel="stylesheet" href="{% static 'css/theme.css' %}">
   <link rel="stylesheet" href="{% static 'css/edit_destination.css' %}">
-  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
   
   <style>
@@ -64,14 +64,14 @@
           </div>
         </div>
 
-      <div class="form-grid" id="date-picker-container" style="display: none;">
+      <div class="form-grid" id="date-picker-container">
         <div>
           <label for="start_trip">Trip starting date:</label>
-          <input type="text" id="start_trip" name="start_trip" class="date-picker" placeholder="Select start date" value="{{ destination.start_trip|default_if_none:'' }}">
+          <input type="date" id="start_trip" name="start_trip" class="date-picker" placeholder="Select start date">
         </div>
         <div>
           <label for="end_trip">Trip ending date:</label>
-          <input type="text" id="end_trip" name="end_trip" class="date-picker" placeholder="Select end date" value="{{ destination.end_trip|default_if_none:'' }}">
+          <input type="date" id="end_trip" name="end_trip" class="date-picker" placeholder="Select end date">
         </div>
       </div>
 
@@ -161,16 +161,16 @@
       var startTripInput = document.getElementById('start_trip');
       var endTripInput = document.getElementById('end_trip');
 
-      // Initialize flatpickr instances
-      var startPicker = flatpickr(startTripInput, {
+      var config = {
         dateFormat: 'Y-m-d',
+        allowInput: true,
         minDate: 'today'
-      });
+      };
 
-      var endPicker = flatpickr(endTripInput, {
-        dateFormat: 'Y-m-d',
-        minDate: 'today'
-      });
+      // Initialize flatpickr instances
+      var startPicker = flatpickr(startTripInput, config);
+
+      var endPicker = flatpickr(endTripInput, config);
 
       // Function to update date picker state based on category
       function updateDatePickerState() {
