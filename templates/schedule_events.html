@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Destinations | WanderList</title>
+  <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+  <link rel="stylesheet" href="{% static 'css/destination.css' %}">
+  <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/main.min.css' rel='stylesheet' />
+
+
+  <style>
+    .no-data {
+      text-align: center;
+      color: #888;
+      font-style: italic;
+      margin-top: 1rem;
+      display: none;
+    }
+    .filter-bar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .filter-input, .filter-select, .filter-btn {
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+    }
+    .filter-btn {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <h1 class="logo">WanderList</h1>
+    <nav class="nav">
+      <a href="{% url 'dashboard' %}">Dashboard</a>
+      <a href="{% url 'destination:list' %}">Destinations</a>
+      <a href="{% url 'my_lists' %}">My Maps</a>
+      <a href="{% url 'destination:explore' %}">Explore</a>
+    <a href="{% url 'schedule_events:calendar' %}" class="active">Schedule & Events</a>
+    </nav>
+    <div class="profile">
+      <a href="{% url 'profile' %}" style="display:flex; align-items:center; gap:8px; color:inherit; text-decoration:none;">
+        <img src="{% static 'images/profile.jpg' %}" alt="User" class="profile-img">
+        <span>{{ user.username }}</span>
+      </a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="container">
+
+      {% if messages %}
+        <div class="messages">
+          {% for message in messages %}
+            <div class="message {{ message.tags }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+      
+        <div id='fullcalendar'></div>
+        
+    {% block extra_js %}
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('fullcalendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                // THIS IS THE KEY: FullCalendar fetches data from your Django endpoint
+                events: '/api/events/', 
+                // Customize the header and appearance as needed
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                }
+            });
+            calendar.render();
+        });
+    </script>
+    {% endblock %}
+
+    </div>
+  </main>
+
+</body>
+</html>

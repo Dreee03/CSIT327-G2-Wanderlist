@@ -7,7 +7,7 @@
   <title>Add Destination | WanderList</title>
   <link rel="stylesheet" href="{% static 'css/theme.css' %}">
   <link rel="stylesheet" href="{% static 'css/add_destination.css' %}">
-  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
   
   <style>
@@ -40,10 +40,7 @@
 
     <form action="{% url 'destination:create' %}" method="POST" enctype="multipart/form-data">
       {% csrf_token %}
-
-      <!-- <label for="destination_image">Destination Image (upload or URL - optional):</label>
-      <input type="file" id="destination_image" name="destination_image" accept="image/png, image/jpeg, image/webp" style="margin-bottom: 20px;">-->
-      <small>Enter an external image URL:</small>
+      <label for="destination_image">Destination Image (Must be URL - optional):</label>
       <input type="url" id="destination_image_url" name="destination_image" value="{{ destination.destination_image }}" placeholder="Enter image URL">
 
       <label for="name">Name:</label>
@@ -54,6 +51,17 @@
 
       <label for="country">Country:</label>
       <input type="text" id="country" name="country" required>
+
+      <div class="form-grid" id="date-picker-container">
+        <div>
+          <label for="start_trip">Trip starting date:</label>
+          <input type="date" id="start_trip" name="start_trip" class="date-picker" placeholder="Select start date">
+        </div>
+        <div>
+          <label for="end_trip">Trip ending date:</label>
+          <input type="date" id="end_trip" name="end_trip" class="date-picker" placeholder="Select end date">
+        </div>
+      </div>
 
       <label>Click on the map to set coordinates:</label>
       <div id="picker-map"></div>
@@ -93,6 +101,7 @@
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script>
     (function() {
       var latInput = document.getElementById('latitude');
@@ -119,6 +128,59 @@
           marker = L.marker(e.latlng).addTo(map);
         }
       });
+    })();
+
+    // Date Picker Logic
+    (function() {
+      var categorySelect = document.getElementById('category');
+      var datePickerContainer = document.getElementById('date-picker-container');
+      var startTripInput = document.getElementById('start_trip');
+      var endTripInput = document.getElementById('end_trip');
+
+      var config = {
+        dateFormat: 'Y-m-d',
+        allowInput: true,
+        minDate: 'today'
+      };
+
+      // Initialize flatpickr instances
+      var startPicker = flatpickr(startTripInput, config);
+
+      var endPicker = flatpickr(endTripInput, config);
+
+      // Function to update date picker state based on category
+      function updateDatePickerState() {
+        var selectedCategory = categorySelect.value;
+
+        if (selectedCategory === 'Planned') {
+          // Show and enable date pickers for Planned
+          datePickerContainer.style.display = 'grid';
+          startTripInput.disabled = false;
+          endTripInput.disabled = false;
+          startTripInput.required = true;
+          endTripInput.required = true;
+        } else if (selectedCategory === 'Visited') {
+          // Show but disable date pickers for Visited
+          datePickerContainer.style.display = 'grid';
+          startTripInput.disabled = true;
+          endTripInput.disabled = true;
+          startTripInput.required = false;
+          endTripInput.required = false;
+        } else {
+          // Hide date pickers for Dreaming or no selection
+          datePickerContainer.style.display = 'none';
+          startTripInput.disabled = true;
+          endTripInput.disabled = true;
+          startTripInput.required = false;
+          endTripInput.required = false;
+        }
+      }
+
+      // Listen for category changes
+      categorySelect.addEventListener('change', updateDatePickerState);
+
+      // Initialize on page load
+      updateDatePickerState();
     })();
   </script>
 </body>
