@@ -74,7 +74,6 @@ def dashboard_view(request):
 
     query = request.GET.get('q', '').strip()
     category = request.GET.get('category', '').strip()
-    sort = request.GET.get('sort', '').strip()
 
     response = supabase.table("destination").select("*").eq("user_id", custom_user_id).execute()
     destinations = response.data if response.data else []
@@ -94,33 +93,6 @@ def dashboard_view(request):
     if category:
         destinations = [d for d in destinations if d.get('category', '').lower() == category.lower()]
 
-    # SORT HELPERS
-    def _parse_date(d):
-        for key in ('created_at', 'createdAt', 'inserted_at', 'date_added', 'added_at'):
-            v = d.get(key)
-            if v:
-                try:
-                    return datetime.datetime.fromisoformat(v.replace('Z', '+00:00'))
-                except:
-                    try:
-                        return datetime.datetime.strptime(v, '%Y-%m-%d %H:%M:%S')
-                    except:
-                        pass
-        return None
-
-    # SORT LOGIC
-    try:
-        if sort == 'date_desc':
-            destinations.sort(key=lambda x: _parse_date(x) or datetime.datetime.min, reverse=True)
-        elif sort == 'date_asc':
-            destinations.sort(key=lambda x: _parse_date(x) or datetime.datetime.min)
-        elif sort == 'name_asc':
-            destinations.sort(key=lambda x: (x.get('name') or '').lower())
-        elif sort == 'name_desc':
-            destinations.sort(key=lambda x: (x.get('name') or '').lower(), reverse=True)
-    except:
-        pass
-
     # DAILY QUOTE
     daily_quote = get_daily_quote()
 
@@ -130,7 +102,6 @@ def dashboard_view(request):
         'destinations': destinations,
         'query': query,
         'category': category,
-        'sort': sort,
         'quote': daily_quote
     }
 
