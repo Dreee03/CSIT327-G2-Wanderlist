@@ -16,7 +16,7 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('dashboard/', include('dashboard.urls')),  # Dashboard and daily quote live here
     path('destination/', include('destination.urls')),
-    #path('schedule_events', include('schedule_events.urls')),
+    path('schedule_events/', include('schedule_events.url')),
     
     # Root redirect
     path('', home_redirect),
