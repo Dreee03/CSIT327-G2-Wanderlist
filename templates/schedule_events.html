@@ -4,94 +4,430 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Destinations | WanderList</title>
+  <title>Calendar | WanderList</title>
   <link rel="stylesheet" href="{% static 'css/theme.css' %}">
-  <link rel="stylesheet" href="{% static 'css/destination.css' %}">
-  <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/main.min.css' rel='stylesheet' />
-
-
+  
+  <!-- FullCalendar CSS -->
+  <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css' rel='stylesheet' />
+  
   <style>
-    .no-data {
-      text-align: center;
-      color: #888;
-      font-style: italic;
-      margin-top: 1rem;
-      display: none;
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 0;
     }
-    .filter-bar {
+    
+    .navbar {
+      background-color: #ffffff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 1rem 2rem;
       display: flex;
-      gap: 10px;
+      justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
     }
-    .filter-input, .filter-select, .filter-btn {
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 15px;
+    
+    .nav-left {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
     }
-    .filter-btn {
-      background-color: #007bff;
-      color: #fff;
-      border: none;
+    
+    .logo-text {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #007bff;
+      text-decoration: none;
+    }
+    
+    .nav-link {
+      text-decoration: none;
+      color: #666;
+      transition: color 0.3s;
+    }
+    
+    .nav-link.active,
+    .nav-link:hover {
+      color: #007bff;
+    }
+    
+    .nav-right {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    
+    .profile {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
       cursor: pointer;
+    }
+    
+    .calendar-container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      background-color: white;
+      border-radius: 8px;
+      padding: 2rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .calendar-header {
+      margin-bottom: 2rem;
+    }
+    
+    .calendar-header h1 {
+      margin: 0;
+      color: #333;
+    }
+    
+    .calendar-header p {
+      color: #666;
+      margin: 0.5rem 0 0 0;
+    }
+    
+    #calendar {
+      font-size: 0.95rem;
+    }
+    
+    /* FullCalendar customization */
+    .fc {
+      font-family: inherit;
+    }
+    
+    .fc .fc-button-primary {
+      background-color: #007bff;
+      border-color: #007bff;
+    }
+    
+    .fc .fc-button-primary:hover {
+      background-color: #0056b3;
+      border-color: #0056b3;
+    }
+    
+    .fc .fc-button-primary.fc-button-active {
+      background-color: #0056b3;
+      border-color: #0056b3;
+    }
+    
+    .fc-event {
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    
+    .fc-event-title {
+      font-weight: 600;
+      padding: 2px 4px;
+    }
+    
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+    
+    .modal-content {
+      background-color: #fff;
+      margin: 5% auto;
+      padding: 2rem;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 1rem;
+    }
+    
+    .modal-header h2 {
+      margin: 0;
+      color: #333;
+    }
+    
+    .close-btn {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #999;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+    
+    .close-btn:hover {
+      color: #333;
+    }
+    
+    .modal-body {
+      margin-bottom: 1rem;
+    }
+    
+    .modal-body p {
+      margin: 0.5rem 0;
+      color: #666;
+    }
+    
+    .modal-body strong {
+      color: #333;
+    }
+    
+    .modal-footer {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+    }
+    
+    .btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.3s;
+    }
+    
+    .btn-primary {
+      background-color: #007bff;
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background-color: #0056b3;
+    }
+    
+    .btn-secondary {
+      background-color: #6c757d;
+      color: white;
+    }
+    
+    .btn-secondary:hover {
+      background-color: #5a6268;
+    }
+    
+    .btn-danger {
+      background-color: #dc3545;
+      color: white;
+    }
+    
+    .btn-danger:hover {
+      background-color: #c82333;
+    }
+    
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-right: 0.5rem;
+    }
+    
+    .badge-visited {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    
+    .badge-planned {
+      background-color: #cce5ff;
+      color: #004085;
+    }
+    
+    .badge-dreaming {
+      background-color: #e2e3e5;
+      color: #383d41;
+    }
+    
+    .legend {
+      display: flex;
+      gap: 2rem;
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid #eee;
+      flex-wrap: wrap;
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .legend-color {
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+    }
+    
+    .legend-visited {
+      background-color: #28a745;
+    }
+    
+    .legend-planned {
+      background-color: #007bff;
+    }
+    
+    .legend-dreaming {
+      background-color: #6c757d;
+    }
+
+    @media (max-width: 768px) {
+      .nav-left {
+        gap: 1rem;
+        font-size: 0.9rem;
+      }
+      
+      .calendar-container {
+        margin: 1rem;
+        padding: 1rem;
+      }
+      
+      .legend {
+        gap: 1rem;
+      }
     }
   </style>
 </head>
 <body>
 
-  <aside class="sidebar">
-    <h1 class="logo">WanderList</h1>
-    <nav class="nav">
-      <a href="{% url 'dashboard' %}">Dashboard</a>
-      <a href="{% url 'destination:list' %}">Destinations</a>
-      <a href="{% url 'my_lists' %}">My Maps</a>
-      <a href="{% url 'destination:explore' %}">Explore</a>
-    <a href="{% url 'schedule_events:calendar' %}" class="active">Schedule & Events</a>
-    </nav>
-    <div class="profile">
-      <a href="{% url 'profile' %}" style="display:flex; align-items:center; gap:8px; color:inherit; text-decoration:none;">
-        <img src="{% static 'images/profile.jpg' %}" alt="User" class="profile-img">
-        <span>{{ user.username }}</span>
+  <!-- ✅ Navbar -->
+  <header class="navbar">
+    <div class="nav-left">
+      <a href="{% url 'dashboard' %}" class="logo-text">WanderList</a>
+      <a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a>
+      <a href="{% url 'destination:list' %}" class="nav-link">Destinations</a>
+      <a href="{% url 'my_lists' %}" class="nav-link">My Maps</a>
+      <a href="{% url 'destination:explore' %}" class="nav-link">Explore</a>
+      <a href="{% url 'schedule_events:calendar' %}" class="nav-link active">Calendar</a>
+    </div>
+
+    <div class="nav-right">
+      {% static 'images/profile.jpg' as default_profile %}
+      <a href="{% url 'profile' %}">
+        <img class="profile" src="{{ profile.profile_pic.url|default:default_profile }}" alt="{{ user.username }}">
       </a>
     </div>
-  </aside>
+  </header>
 
-  <main class="main">
-    <div class="container">
-
-      {% if messages %}
-        <div class="messages">
-          {% for message in messages %}
-            <div class="message {{ message.tags }}">{{ message }}</div>
-          {% endfor %}
-        </div>
-      {% endif %}
-      
-        <div id='fullcalendar'></div>
-        
-    {% block extra_js %}
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'>
-        document.addEventListener('DOMContentLoaded', function() {
-            var calendarEl = document.getElementById('fullcalendar');
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                // THIS IS THE KEY: FullCalendar fetches data from your Django endpoint
-                events: '/api/events/', 
-                // Customize the header and appearance as needed
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                }
-            });
-            calendar.render();
-        });
-    </script>
-    {% endblock %}
-
+  <!-- Main Calendar Container -->
+  <div class="calendar-container">
+    <div class="calendar-header">
+      <h1>📅 My Trip Calendar</h1>
+      <p>Visualize all your planned, visited, and dreamed destinations</p>
     </div>
-  </main>
+
+    <!-- FullCalendar -->
+    <div id="calendar"></div>
+
+    <!-- Legend -->
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-color legend-visited"></div>
+        <span><strong>Visited:</strong> Trips you've completed</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color legend-planned"></div>
+        <span><strong>Planned:</strong> Upcoming trips</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color legend-dreaming"></div>
+        <span><strong>Dreaming:</strong> Future inspirations</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Event Detail Modal -->
+  <div id="eventModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalTitle">Event Details</h2>
+        <button class="close-btn" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Category:</strong> <span id="modalCategory" class="badge"></span></p>
+        <p><strong>Start Date:</strong> <span id="modalStart"></span></p>
+        <p><strong>End Date:</strong> <span id="modalEnd"></span></p>
+        <p><strong>Description:</strong></p>
+        <p id="modalDescription" style="color: #666; font-style: italic;"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+        <a id="editLink" href="#" class="btn btn-primary" style="text-decoration: none;">Edit Destination</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- FullCalendar JS -->
+  <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var calendarEl = document.getElementById('calendar');
+      var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        headerToolbar: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+        },
+        events: '{% url "schedule_events:get_events" %}',
+        eventClick: function(info) {
+          showEventDetails(info.event);
+        },
+        height: 'auto',
+        contentHeight: 'auto',
+        eventDisplay: 'block',
+      });
+      calendar.render();
+    });
+
+    function showEventDetails(event) {
+      const modal = document.getElementById('eventModal');
+      const category = event.extendedProps.category || 'Dreaming';
+      const startDate = new Date(event.start).toLocaleString();
+      const endDate = new Date(event.end).toLocaleString();
+
+      // Set badge class
+      let badgeClass = 'badge-dreaming';
+      if (category === 'Visited') badgeClass = 'badge-visited';
+      if (category === 'Planned') badgeClass = 'badge-planned';
+
+      document.getElementById('modalTitle').textContent = event.title;
+      document.getElementById('modalCategory').textContent = category;
+      document.getElementById('modalCategory').className = 'badge ' + badgeClass;
+      document.getElementById('modalStart').textContent = startDate;
+      document.getElementById('modalEnd').textContent = endDate;
+      document.getElementById('modalDescription').textContent = event.extendedProps.description || 'No description provided.';
+      
+      // Set edit link to destination edit page
+      document.getElementById('editLink').href = '/destination/edit/' + event.id + '/';
+      
+      modal.style.display = 'block';
+    }
+
+    function closeModal() {
+      document.getElementById('eventModal').style.display = 'none';
+    }
+
+    // Close modal when clicking outside of it
+    window.onclick = function(event) {
+      const modal = document.getElementById('eventModal');
+      if (event.target == modal) {
+        modal.style.display = 'none';
+      }
+    }
+  </script>
 
 </body>
 </html>
