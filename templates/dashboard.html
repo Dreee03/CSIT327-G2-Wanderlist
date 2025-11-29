@@ -83,8 +83,10 @@
 
       <select id="sortSelect" style="padding:12px 15px; border-radius:8px; border:1px solid #ccc; font-size:16px;">
         <option value="">Sort (None)</option>
+        <!-- Date Sorting -->
         <option value="date_desc">Date Added (Newest first)</option>
         <option value="date_asc">Date Added (Oldest first)</option>
+        <!-- Name Sorting -->
         <option value="name_asc">Alphabetical (A–Z)</option>
         <option value="name_desc">Alphabetical (Z–A)</option>
       </select>
@@ -108,7 +110,7 @@
     <!-- Destination Cards -->
     <div class="destination-grid">
       {% for destination in destinations %}
-      <div class="destination-card" data-category="{{ destination.category|lower }}">
+      <div class="destination-card" data-category="{{ destination.category|lower }}" data-created="{{ destination.created_at|default:'' }}" data-inserted="{{ destination.inserted_at|default:'' }}">
         <div class="card-gradient"></div>
 
         {% if destination.destination_image %}
@@ -265,6 +267,67 @@
 
     searchInput.addEventListener("input", filterDestinations);
     categoryFilter.addEventListener("change", filterDestinations);
+
+    /* ===============================
+       SORTING LOGIC
+    =============================== */
+
+    const sortSelect = document.getElementById("sortSelect");
+    const destinationGrid = document.querySelector(".destination-grid");
+
+    // Helper function to convert ISO timestamp to timestamp
+    function getTimestamp(card) {
+      const created = card.dataset.created;
+      const inserted = card.dataset.inserted;
+      const dateString = created || inserted || null;
+      
+      if (!dateString) return 0;
+      
+      try {
+        return new Date(dateString).getTime();
+      } catch (e) {
+        return 0;
+      }
+    }
+
+    function sortDestinations() {
+      const sortValue = sortSelect.value;
+      const visibleCards = Array.from(cards).filter(card => card.style.display !== "none");
+
+      visibleCards.sort((a, b) => {
+        if (sortValue === "date_desc") {
+          // Newest first
+          const dateA = getTimestamp(a);
+          const dateB = getTimestamp(b);
+          return dateB - dateA;
+        } else if (sortValue === "date_asc") {
+          // Oldest first
+          const dateA = getTimestamp(a);
+          const dateB = getTimestamp(b);
+          return dateA - dateB;
+        } else if (sortValue === "name_asc") {
+          // A-Z
+          const nameA = a.querySelector(".card-title").textContent.toLowerCase();
+          const nameB = b.querySelector(".card-title").textContent.toLowerCase();
+          return nameA.localeCompare(nameB);
+        } else if (sortValue === "name_desc") {
+          // Z-A
+          const nameA = a.querySelector(".card-title").textContent.toLowerCase();
+          const nameB = b.querySelector(".card-title").textContent.toLowerCase();
+          return nameB.localeCompare(nameA);
+        }
+        return 0;
+      });
+
+      // Re-append sorted cards to the grid
+      visibleCards.forEach(card => {
+        destinationGrid.appendChild(card);
+      });
+    }
+
+    sortSelect.addEventListener("change", () => {
+      sortDestinations();
+    });
 
   });
   </script>
