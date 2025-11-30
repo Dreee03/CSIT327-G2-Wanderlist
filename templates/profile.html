@@ -6,6 +6,7 @@
   <title>User Profile - WanderList</title>
   
   <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
   
@@ -14,30 +15,30 @@
       background-color: var(--wl-bg, #f8f9fa);
       font-family: var(--wl-font-family, 'Segoe UI', sans-serif);
       color: var(--wl-text);
-      padding-top: 2rem;
+      /* Padding top handled by standard layout */
     }
 
+    /* ✅ NAVBAR FIX: Remove the white background override so it uses the theme's blue gradient */
     .navbar {
-      background: linear-gradient(90deg, var(--wl-deep), var(--wl-blue)) !important;
+      padding: 0.75rem 2rem;
+      /* The background color is now handled by theme.css (Blue Gradient) */
     }
-    .navbar-brand {
-      font-weight: bold;
-      font-size: 1.5rem;
-    }
-    
+
     .profile-container {
-      max-width: 900px;
+      max-width: 1000px;
       margin: 2rem auto;
       background: var(--wl-surface, #fff);
       border-radius: 12px;
       box-shadow: var(--wl-shadow, 0 8px 24px rgba(14, 58, 91, 0.08));
       display: flex;
       flex-wrap: wrap; 
+      overflow: hidden;
     }
 
     .profile-sidebar {
       width: 300px;
-      padding: 30px;
+      padding: 40px 30px;
+      background: #fdfdfd;
       border-right: 1px solid var(--wl-border, #e5e7eb);
       display: flex;
       flex-direction: column;
@@ -47,180 +48,116 @@
 
     .profile-main {
       flex: 1; 
-      padding: 30px;
+      padding: 40px;
     }
     
     .profile-pic {
-      width: 150px;
-      height: 150px;
+      width: 140px;
+      height: 140px;
       object-fit: cover;
       border-radius: 50%;
-      border: 3px solid var(--wl-primary, #0d6efd);
-      margin-bottom: 1.5rem;
+      border: 4px solid var(--wl-surface);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      margin-bottom: 1rem;
     }
 
     .profile-sidebar h2 {
       font-size: 1.25rem;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--wl-text);
       width: 100%;
       text-align: left;
-      border-bottom: 1px solid var(--wl-border, #e5e7eb);
+      border-bottom: 2px solid var(--wl-border, #e5e7eb);
       padding-bottom: 10px;
       margin-top: 1.5rem;
+      margin-bottom: 1rem;
     }
 
-    /* ✅ --- START: Stats Block Styling --- */
-    .profile-stats {
-      width: 100%;
-      margin-top: 1rem;
-    }
     .stat-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0.75rem 0;
-      border-bottom: 1px solid var(--wl-border, #f0f0f0);
-      text-decoration: none; /* Remove underline */
-      cursor: pointer; /* Show hand on hover */
-      transition: background-color 0.2s;
+      padding: 0.9rem 0;
+      border-bottom: 1px solid #f0f0f0;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s;
     }
-    .stat-item:hover {
-      background-color: var(--wl-bg, #f8f9fa);
-    }
-    .stat-item:last-child {
-      border-bottom: none;
-    }
-    .stat-item span:first-child {
-      font-weight: 500;
-      color: var(--wl-text);
-    }
-    .stat-item span.stat-count {
-      font-weight: 700;
-      font-size: 1.1rem;
-      color: var(--wl-primary);
-    }
-    .stat-item.visited span.stat-count { color: #28a745; }
-    .stat-item.dreaming span.stat-count { color: #6f42c1; }
-    /* ✅ --- END: Stats Block Styling --- */
+    .stat-item:hover { transform: translateX(5px); }
+    .stat-item span:first-child { font-weight: 600; color: #555; }
+    .stat-item span.stat-count { font-weight: 800; font-size: 1.2rem; color: var(--wl-primary); }
 
-    /* ✅ ADDED: Styling for the list inside the modal */
-    .modal-destination-list {
-      list-style-type: none;
-      padding: 0;
-      max-height: 400px;
-      overflow-y: auto;
-    }
-    .modal-dest-item {
-      display: flex;
-      align-items: center;
-      padding: 10px;
-      border-bottom: 1px solid #eee;
-    }
-    .modal-dest-item:last-child {
-      border-bottom: none;
-    }
-    .modal-dest-img {
-      width: 60px;
-      height: 60px;
-      object-fit: cover;
-      border-radius: 8px;
-      margin-right: 15px;
-      background-color: #eee;
-    }
-    .modal-dest-item span {
-      font-size: 1.1rem;
-      font-weight: 500;
-      color: #333;
-    }
-    /* --- End of new styles --- */
-
-    .profile-header h1 {
-      font-size: 2rem;
-      font-weight: 700;
-      margin: 0;
-    }
-    .profile-header p {
-      font-size: 1rem;
-      color: var(--wl-muted, #6c757d);
-      margin-bottom: 1.5rem;
-    }
+    .profile-header h1 { font-size: 2.2rem; font-weight: 800; margin: 0; color: var(--wl-deep); }
+    .profile-header p { font-size: 1rem; color: var(--wl-muted); margin-bottom: 2rem; }
     
-    .form-group {
-      margin-bottom: 1.25rem;
-    }
-    .form-group label {
-      display: block;
-      font-weight: 500;
-      margin-bottom: 6px;
-      color: var(--wl-text);
-    }
-    .form-group input[type="text"],
-    .form-group input[type="email"],
-    .form-group input[type="number"],
-    .form-group textarea,
-    .form-group input[type="file"] {
+    .form-group { margin-bottom: 1.25rem; }
+    .form-group label { display: block; font-weight: 600; margin-bottom: 8px; color: var(--wl-deep); font-size: 0.9rem;}
+    
+    /* INPUT STYLES */
+    .form-control-custom {
       width: 100%;
-      padding: 10px 12px;
-      border: 1px solid var(--wl-border, #ccc);
+      padding: 12px 15px;
+      border: 1px solid #e0e0e0;
       border-radius: 8px;
       font-size: 0.95rem;
-      box-sizing: border-box;
-    }
-    .form-group input[type="text"]:read-only {
-      background: var(--wl-bg, #f8f9fa);
-      cursor: not-allowed;
+      background-color: #fff;
+      transition: all 0.3s;
     }
     
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
+    /* READ ONLY STATE (Default) */
+    .form-control-custom[readonly] {
+      background-color: #f9fafb; /* Light gray */
+      border-color: transparent;
+      color: #555;
+      cursor: default;
     }
     
-    .form-grid-small {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
+    /* EDIT STATE */
+    .form-control-custom:not([readonly]):focus {
+      border-color: var(--wl-primary);
+      box-shadow: 0 0 0 3px rgba(59, 166, 255, 0.15);
+      outline: none;
+      background-color: #fff;
     }
 
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    
     .form-actions {
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-start;
+      gap: 10px;
       align-items: center;
       margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid #eee;
     }
-    
-    @media (max-width: 768px) {
-      .profile-container {
-        flex-direction: column;
-      }
-      .profile-sidebar {
-        width: 100%;
-        border-right: none;
-        border-bottom: 1px solid var(--wl-border, #e5e7eb);
-      }
-      .form-grid, .form-grid-small {
-        grid-template-columns: 1fr;
-      }
-    }
+
+    /* Utility classes for toggling */
+    .d-none { display: none !important; }
 
   </style>
 </head>
 <body>
 
-  <nav class="navbar navbar-expand-lg navbar-dark px-3">
-    <a class="navbar-brand" href="{% url 'dashboard' %}">WanderList</a>
-    <div class="ms-auto d-flex align-items: center">
-      <a href="{% url 'profile' %}" class="text-white mx-3" title="Profile">
-        {% static 'images/profile.jpg' as default_profile_nav %}
-        <img src="{{ profile.profile_pic.url|default:default_profile_nav }}" alt="Profile" class="rounded-circle" width="45" height="45" style="object-fit: cover;">
-      </a>
-      <a href="{% url 'logout' %}" class="btn btn-outline-light btn-sm">Logout</a>
+  <header class="navbar">
+    <div class="nav-left">
+      <a href="{% url 'dashboard' %}" class="logo-text">WanderList</a>
+      <a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a>
+      <a href="{% url 'destination:list' %}" class="nav-link">Destinations</a>
+      <a href="{% url 'my_lists' %}" class="nav-link">My Maps</a>
+      <a href="{% url 'destination:explore' %}" class="nav-link">Explore</a>
+      <a href="{% url 'schedule_events:calendar' %}" class="nav-link">Calendar</a>
     </div>
-  </nav>
 
-  <form method="POST" enctype="multipart/form-data">
+    <div class="nav-right">
+      <a href="{% url 'profile' %}">
+        {% static 'images/profile.jpg' as default_profile_nav %}
+        <img class="profile" src="{{ profile.profile_pic.url|default:default_profile_nav }}" alt="{{ user.username }}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:1px solid #ccc;">
+      </a>
+    </div>
+  </header>
+
+  <form method="POST" enctype="multipart/form-data" id="profileForm">
     {% csrf_token %}
     <div class="profile-container">
       
@@ -228,7 +165,12 @@
         {% static 'images/profile.jpg' as default_profile_main %}
         <img src="{{ profile.profile_pic.url|default:default_profile_main }}" alt="Profile Picture" class="profile-pic">
         
-        <h2>Account</h2>
+        <div id="photoUploadContainer" class="d-none mt-2">
+            <label class="btn btn-sm btn-outline-primary" for="id_profile_pic">Change Photo</label>
+            <div style="height:0;overflow:hidden;">{{ form.profile_pic }}</div>
+        </div>
+
+        <h2>Travel Stats</h2>
         <div class="profile-stats">
           <a class="stat-item" data-bs-toggle="modal" data-bs-target="#plannedModal">
             <span>Planned</span>
@@ -243,96 +185,99 @@
             <span class="stat-count">{{ stats.Dreaming }}</span>
           </a>
         </div>
+        
+        <div style="margin-top:auto; width:100%; padding-top:20px;">
+             <button type="button" class="btn btn-outline-warning w-100 mb-2" data-bs-toggle="modal" data-bs-target="#passwordModal">
+                Change Password
+            </button>
+            <a href="{% url 'logout' %}" class="btn btn-outline-danger w-100">Sign Out</a>
+        </div>
       </aside>
       
       <main class="profile-main">
         <div class="profile-header">
           <h1>{{ user.username }}</h1>
-          <p>Update your account details and profile.</p>
+          <p>Manage your personal information</p>
         </div>
         
         {% if messages %}
           {% for message in messages %}
-            <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %} alert-dismissible fade show" role="alert">
+            <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %} alert-dismissible fade show">
               {{ message }}
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
           {% endfor %}
         {% endif %}
         
         <div class="form-group">
-          <label for="id_bio">Bio</label>
-          {{ form.bio }}
+          <label>Bio</label>
+          <textarea name="bio" class="form-control-custom editable-field" rows="3" readonly>{{ form.bio.value|default:'' }}</textarea>
         </div>
         
-        <div class="form-group">
-          <label for="username">Username</label>
-          <input type="text" id="username" value="{{ user.username }}" readonly>
-        </div>
-        
-        <div class="form-group">
-          <label for="id_email">Email</label>
-          {{ form.email }}
-          {% if form.email.errors %}<div class="text-danger small">{{ form.email.errors|striptags }}</div>{% endif %}
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Username (Cannot be changed)</label>
+                <input type="text" value="{{ user.username }}" class="form-control-custom" readonly style="background:#eaeff5;">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email" value="{{ form.email.value|default:'' }}" class="form-control-custom editable-field" readonly>
+            </div>
         </div>
         
         <div class="form-grid">
           <div class="form-group">
-            <label for="id_first_name">First Name</label>
-            {{ form.first_name }}
+            <label>First Name</label>
+            <input type="text" name="first_name" value="{{ form.first_name.value|default:'' }}" class="form-control-custom editable-field" readonly>
           </div>
           <div class="form-group">
-            <label for="id_last_name">Last Name</label>
-            {{ form.last_name }}
+            <label>Last Name</label>
+            <input type="text" name="last_name" value="{{ form.last_name.value|default:'' }}" class="form-control-custom editable-field" readonly>
           </div>
         </div>
         
-        <div class="form-grid-small">
+        <div class="form-grid">
           <div class="form-group">
-            <label for="id_middle_initial">Middle Initial</label>
-            {{ form.middle_initial }}
+            <label>Middle Initial</label>
+            <input type="text" name="middle_initial" value="{{ form.middle_initial.value|default:'' }}" class="form-control-custom editable-field" readonly>
           </div>
           <div class="form-group">
-            <label for="id_age">Age</label>
-            {{ form.age }}
+            <label>Age</label>
+            <input type="number" name="age" value="{{ form.age.value|default:'' }}" class="form-control-custom editable-field" readonly>
           </div>
-        </div>
-        
-        <div class="form-group">
-          <label for="id_profile_pic">Update Profile Picture</label>
-          {{ form.profile_pic }}
         </div>
 
         <div class="form-actions">
-          <button type="submit" class="btn btn-primary px-4">Save Changes</button>
-          
-          <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#passwordModal">
-            Change Password
+          <button type="button" id="btnEdit" class="btn btn-primary px-4" onclick="enableEditMode()">
+            <i class="bi bi-pencil-fill me-2"></i>Edit Profile
           </button>
-
-          <a href="{% url 'dashboard' %}" class="btn btn-link text-muted">← Back to Dashboard</a>
+          
+          <button type="submit" id="btnSave" class="btn btn-success px-4 d-none">
+            <i class="bi bi-check-lg me-2"></i>Save Changes
+          </button>
+          
+          <button type="button" id="btnCancel" class="btn btn-secondary px-3 d-none" onclick="cancelEditMode()">
+            Cancel
+          </button>
         </div>
         
       </main>
     </div>
   </form>
 
-  <div class="modal fade" id="plannedModal" tabindex="-1" aria-labelledby="plannedModalLabel" aria-hidden="true">
+  <div class="modal fade" id="plannedModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="plannedModalLabel">Planned Destinations ({{ stats.Planned }})</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
+        <div class="modal-header"><h5 class="modal-title">Planned Destinations</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
         <div class="modal-body">
-          <ul class="modal-destination-list">
+             <ul class="list-group list-group-flush">
             {% for dest in planned_destinations %}
-              <li class="modal-dest-item">
-                <img src="{{ dest.destination_image|default:'/static/images/newyork.jpg' }}" class="modal-dest-img" alt="{{ dest.name }}">
-                <span>{{ dest.name }}</span>
+              <li class="list-group-item d-flex align-items-center">
+                <img src="{{ dest.destination_image|default:'/static/images/newyork.jpg' }}" style="width:50px;height:50px;object-fit:cover;border-radius:6px;margin-right:12px;">
+                <span class="fw-bold">{{ dest.name }}</span>
               </li>
             {% empty %}
-              <li>No planned destinations yet.</li>
+              <li class="list-group-item">No planned destinations yet.</li>
             {% endfor %}
           </ul>
         </div>
@@ -340,22 +285,19 @@
     </div>
   </div>
 
-  <div class="modal fade" id="visitedModal" tabindex="-1" aria-labelledby="visitedModalLabel" aria-hidden="true">
+  <div class="modal fade" id="visitedModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="visitedModalLabel">Visited Destinations ({{ stats.Visited }})</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
+        <div class="modal-header"><h5 class="modal-title">Visited Destinations</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
         <div class="modal-body">
-          <ul class="modal-destination-list">
+             <ul class="list-group list-group-flush">
             {% for dest in visited_destinations %}
-              <li class="modal-dest-item">
-                <img src="{{ dest.destination_image|default:'/static/images/paris.jpg' }}" class="modal-dest-img" alt="{{ dest.name }}">
-                <span>{{ dest.name }}</span>
+              <li class="list-group-item d-flex align-items-center">
+                <img src="{{ dest.destination_image|default:'/static/images/paris.jpg' }}" style="width:50px;height:50px;object-fit:cover;border-radius:6px;margin-right:12px;">
+                <span class="fw-bold">{{ dest.name }}</span>
               </li>
             {% empty %}
-              <li>No visited destinations yet.</li>
+              <li class="list-group-item">No visited destinations yet.</li>
             {% endfor %}
           </ul>
         </div>
@@ -363,22 +305,19 @@
     </div>
   </div>
 
-  <div class="modal fade" id="dreamingModal" tabindex="-1" aria-labelledby="dreamingModalLabel" aria-hidden="true">
+  <div class="modal fade" id="dreamingModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="dreamingModalLabel">Dreaming Destinations ({{ stats.Dreaming }})</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
+        <div class="modal-header"><h5 class="modal-title">Dream Destinations</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
         <div class="modal-body">
-          <ul class="modal-destination-list">
+             <ul class="list-group list-group-flush">
             {% for dest in dreaming_destinations %}
-              <li class="modal-dest-item">
-                <img src="{{ dest.destination_image|default:'/static/images/tokyo.jpg' }}" class="modal-dest-img" alt="{{ dest.name }}">
-                <span>{{ dest.name }}</span>
+              <li class="list-group-item d-flex align-items-center">
+                <img src="{{ dest.destination_image|default:'/static/images/tokyo.jpg' }}" style="width:50px;height:50px;object-fit:cover;border-radius:6px;margin-right:12px;">
+                <span class="fw-bold">{{ dest.name }}</span>
               </li>
             {% empty %}
-              <li>No dream destinations yet.</li>
+              <li class="list-group-item">No dream destinations yet.</li>
             {% endfor %}
           </ul>
         </div>
@@ -391,18 +330,18 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Change Password</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <form action="{% url 'change_password' %}" method="POST">
           {% csrf_token %}
           <div class="modal-body">
             <div class="mb-3">
               <label class="form-label">New Password</label>
-              <input type="password" name="new_password" class="form-control" required minlength="6" placeholder="At least 6 characters">
+              <input type="password" name="new_password" class="form-control" required minlength="6">
             </div>
             <div class="mb-3">
               <label class="form-label">Confirm Password</label>
-              <input type="password" name="confirm_password" class="form-control" required placeholder="Re-enter new password">
+              <input type="password" name="confirm_password" class="form-control" required>
             </div>
           </div>
           <div class="modal-footer">
@@ -415,6 +354,29 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    function enableEditMode() {
+        // 1. Remove readonly from inputs
+        const fields = document.querySelectorAll('.editable-field');
+        fields.forEach(field => {
+            field.removeAttribute('readonly');
+        });
+
+        // 2. Show/Hide buttons
+        document.getElementById('btnEdit').classList.add('d-none');
+        document.getElementById('btnSave').classList.remove('d-none');
+        document.getElementById('btnCancel').classList.remove('d-none');
+        
+        // 3. Show photo upload
+        document.getElementById('photoUploadContainer').classList.remove('d-none');
+    }
+
+    function cancelEditMode() {
+        // Reload page to discard changes and reset state
+        window.location.reload();
+    }
+  </script>
 
 </body>
 </html>
