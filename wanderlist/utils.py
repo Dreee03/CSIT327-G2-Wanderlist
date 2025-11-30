@@ -66,6 +66,7 @@ def login_user(username, password):
                 "message": "Login successful.",
                 "user": response.user,
                 "token": response.session.access_token,
+                "refresh_token": response.session.refresh_token,
                 "custom_user_id": user_data["userID"],
                 "supabase_auth_id": user_data["auth_id"],
                 "username": user_data["username"],

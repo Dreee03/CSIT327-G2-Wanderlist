@@ -6,6 +6,7 @@ from .forms import ProfileForm
 from wanderlist.supabase_client import supabase
 from django.contrib import messages
 from django.http import JsonResponse
+from .forms import ProfileForm, ChangePasswordForm  
 import json
 import datetime
 import hashlib
@@ -218,3 +219,42 @@ def edit_destination(request, destination_id):
 def delete_destination(request, destination_id):
     destination.views.delete_destination(request, destination_id)
     return redirect("dashboard")
+
+# ======================================================
+# ✅ PASSWORD CHANGE VIEW
+# ======================================================
+def change_password(request):
+    if request.method != 'POST':
+        return redirect('profile')
+
+    if 'supabase_access_token' not in request.session:
+        return redirect('login')
+
+    form = ChangePasswordForm(request.POST)
+    
+    if form.is_valid():
+        new_password = form.cleaned_data['new_password']
+        
+        try:
+            # ✅ RETRIEVE TOKENS
+            access_token = request.session.get('supabase_access_token')
+            refresh_token = request.session.get('supabase_refresh_token')
+
+            # ✅ SET THE SESSION ON THE SUPABASE CLIENT
+            if access_token and refresh_token:
+                supabase.auth.set_session(access_token, refresh_token)
+            else:
+                messages.error(request, "Security tokens missing. Please logout and login again.")
+                return redirect('profile')
+
+            # Update password
+            attributes = {"password": new_password}
+            supabase.auth.update_user(attributes)
+            messages.success(request, "Password updated successfully!")
+            
+        except Exception as e:
+            messages.error(request, f"Failed to update password: {e}")
+    else:
+        messages.error(request, "Passwords do not match or are invalid.")
+
+    return redirect('profile')
