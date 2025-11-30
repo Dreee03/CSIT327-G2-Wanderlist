@@ -2,11 +2,14 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    # ✅ MAIN DASHBOARD PAGE (shows Daily Quote)
+    # ✅ MAIN DASHBOARD PAGE
     path('', views.dashboard_view, name='dashboard'),
 
     # ✅ PROFILE PAGE
     path('profile/', views.profile_view, name='profile'),
+
+    # ✅ CHANGE PASSWORD (NEW)
+    path('change-password/', views.change_password, name='change_password'),
 
     # ✅ MY LISTS PAGE
     path('my-lists/', views.my_lists_view, name='my_lists'), 

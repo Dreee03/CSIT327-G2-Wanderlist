@@ -78,6 +78,7 @@ def login_view(request):
             
             if session_result.get('success'):
                 request.session['supabase_access_token'] = session_result['token']
+                request.session['supabase_refresh_token'] = session_result['refresh_token']
                 request.session['supabase_auth_id'] = session_result['supabase_auth_id']
                 request.session['custom_user_id'] = session_result['custom_user_id'] 
                 request.session['logged_in_username'] = session_result['username'] 
