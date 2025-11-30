@@ -26,13 +26,13 @@ def register_view(request):
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
             
-            # ✅ Get fields from form (middle_initial removed)
+            # ✅ Get fields from form
             first_name = form.cleaned_data.get('first_name')
             last_name = form.cleaned_data.get('last_name')
             age = form.cleaned_data.get('age')
 
             try:
-                # ✅ Pass new fields to register_user (middle_initial removed)
+                # ✅ Register in Supabase Auth
                 result = register_user(
                     email, password, username, 
                     first_name, last_name, age
@@ -42,7 +42,8 @@ def register_view(request):
                 return render(request, 'register.html', {'form': form})
 
             if result.get('success'):
-                # ✅ Create the local Django UserProfile (middle_initial removed)
+                # ✅ Create the local Django UserProfile immediately
+                # This ensures the data (Name, Age) appears on the profile page later
                 UserProfile.objects.create(
                     username=username,
                     email=email,
@@ -63,7 +64,6 @@ def register_view(request):
 
 
 def login_view(request):
-    # This view is unchanged
     if request.method == 'POST':
         form = CustomAuthenticationForm(data=request.POST)
         if form.is_valid():
@@ -78,6 +78,7 @@ def login_view(request):
             
             if session_result.get('success'):
                 request.session['supabase_access_token'] = session_result['token']
+                # ✅ Save Refresh Token (Required for Password Change feature)
                 request.session['supabase_refresh_token'] = session_result['refresh_token']
                 request.session['supabase_auth_id'] = session_result['supabase_auth_id']
                 request.session['custom_user_id'] = session_result['custom_user_id'] 
