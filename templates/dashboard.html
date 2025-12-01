@@ -166,69 +166,59 @@
   document.addEventListener("DOMContentLoaded", () => {
 
     /* ===============================
-          DAILY QUOTE SYSTEM
+          DAILY QUOTE SYSTEM (CONNECTED TO BACKEND)
     =============================== */
-
-    const quotes = [
-      "Travel is the only thing you buy that makes you richer.",
-      "The journey matters more than the destination.",
-      "Adventure may hurt you but monotony will kill you.",
-      "Jobs fill your pockets, adventures fill your soul.",
-      "Life is short and the world is wide.",
-      "Wander often, wonder always.",
-      "Collect moments, not things.",
-      "Travel far enough, you meet yourself.",
-      "Dream. Explore. Discover."
-    ];
 
     const quoteText = document.getElementById("dailyQuote");
     const errorText = document.getElementById("quoteError");
     const newQuoteBtn = document.getElementById("newQuoteBtn");
 
-    function getRandomQuote() {
-      if (Math.random() < 0.1) throw new Error("Failed fetch");
-      return quotes[Math.floor(Math.random() * quotes.length)];
-    }
-
+    // Helper function to update the UI with animation
     function displayQuote(quote) {
       quoteText.classList.remove("fade");
-      void quoteText.offsetWidth;
+      void quoteText.offsetWidth; // Trigger reflow to restart animation
       quoteText.classList.add("fade");
-
       quoteText.innerText = quote;
-      localStorage.setItem("dailyQuote", quote);
     }
 
-    function loadDailyQuote() {
-      const today = new Date().toDateString();
-      const storedDay = localStorage.getItem("quoteDay");
-
-      if (storedDay !== today) {
-        try {
-          const newQuote = getRandomQuote();
-          localStorage.setItem("quoteDay", today);
-          displayQuote(newQuote);
-          errorText.style.display = "none";
-        } catch {
-          errorText.style.display = "block";
-        }
-      } else {
-        quoteText.innerText = localStorage.getItem("dailyQuote");
-      }
-    }
-
+    // ✅ FIXED: Connect to Django backend instead of using a fake local array
     newQuoteBtn.addEventListener("click", () => {
-      try {
-        const newQuote = getRandomQuote();
-        displayQuote(newQuote);
-        errorText.style.display = "none";
-      } catch {
-        errorText.style.display = "block";
-      }
+      // 1. Disable the button to prevent double-clicking
+      newQuoteBtn.disabled = true;
+
+      // 2. Make a real request to your 'refresh_quote' view
+      fetch("{% url 'refresh_quote' %}")
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (data.quote) {
+            displayQuote(data.quote);
+            errorText.style.display = "none";
+          } else {
+            throw new Error("Invalid response data");
+          }
+        })
+        .catch(error => {
+          console.error("Error fetching quote:", error);
+          errorText.style.display = "block";
+          errorText.innerText = "Failed to fetch a new quote.";
+        })
+        .finally(() => {
+          // 3. Re-enable the button
+          newQuoteBtn.disabled = false;
+        });
     });
 
-    loadDailyQuote();
-
+    // ✅ INITIAL LOAD: Use the quote passed by Django (dashboard/views.py)
+    // This ensures the "Daily Quote" is consistent with the server
+    const initialQuote = "{{ quote|escapejs }}";
+    if (initialQuote) {
+      quoteText.innerText = initialQuote;
+    }
 
     /* ===============================
        SEARCH + FILTER (UNCHANGED)
