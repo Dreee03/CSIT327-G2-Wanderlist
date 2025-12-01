@@ -6,45 +6,11 @@ from .forms import ProfileForm
 from wanderlist.supabase_client import supabase
 from django.contrib import messages
 from django.http import JsonResponse
-from .forms import ProfileForm, ChangePasswordForm  
+from .forms import ProfileForm, ChangePasswordForm
 import json
-import datetime
-import hashlib
-import random
 
-# ======================================================
-# ✅ DAILY QUOTES
-# ======================================================
-QUOTES = [
-    "Travel far enough, you meet yourself.",
-    "Not all who wander are lost.",
-    "Jobs fill your pocket, adventures fill your soul.",
-    "Life is short. Travel often.",
-    "Wherever you go becomes part of you.",
-    "Adventure is worthwhile.",
-    "Collect moments, not things.",
-    "Wander often, wonder always.",
-    "Traveling – it leaves you speechless, then turns you into a storyteller.",
-    "The world is a book, and those who do not travel read only one page.",
-    "Adventure may hurt you but monotony will kill you.",
-    "Life is short and the world is wide.",
-    "Better to see something once than hear about it a thousand times.",
-    "Take only memories, leave only footprints.",
-    "A journey of a thousand miles begins with a single step."
-]
-
-
-def get_daily_quote():
-    """Returns a deterministic quote for the current day."""
-    today = datetime.date.today().isoformat()
-    hash_value = int(hashlib.md5(today.encode()).hexdigest(), 16)
-    index = hash_value % len(QUOTES)
-    return QUOTES[index]
-
-
-def get_random_quote():
-    """Returns a random quote for refresh button."""
-    return random.choice(QUOTES)
+# ✅ IMPORT LOGIC FROM UTILS (Clean & Modular)
+from .utils import get_daily_quote, get_random_quote
 
 
 # ======================================================
@@ -53,9 +19,11 @@ def get_random_quote():
 def refresh_quote(request):
     if request.method == "GET":
         try:
+            # Logic is now handled in utils.py
             new_quote = get_random_quote()
             return JsonResponse({"quote": new_quote})
-        except Exception:
+        except Exception as e:
+            print(f"Error fetching quote: {e}")
             return JsonResponse({"error": "Could not fetch quote."}, status=500)
 
 
@@ -70,14 +38,18 @@ def dashboard_view(request):
     user_obj = SupabaseUser(username=username, is_authenticated=True)
     custom_user_id = request.session.get('custom_user_id')
 
-    # FIXED SPELLING ERROR
+    # Ensure profile exists locally
     profile, _ = UserProfile.objects.get_or_create(username=username)
 
     query = request.GET.get('q', '').strip()
     category = request.GET.get('category', '').strip()
 
-    response = supabase.table("destination").select("*").eq("user_id", custom_user_id).execute()
-    destinations = response.data if response.data else []
+    try:
+        response = supabase.table("destination").select("*").eq("user_id", custom_user_id).execute()
+        destinations = response.data if response.data else []
+    except Exception as e:
+        print(f"Error fetching destinations: {e}")
+        destinations = []
 
     # SEARCH
     if query:
@@ -94,7 +66,7 @@ def dashboard_view(request):
     if category:
         destinations = [d for d in destinations if d.get('category', '').lower() == category.lower()]
 
-    # DAILY QUOTE
+    # DAILY QUOTE (Logic handled in utils.py)
     daily_quote = get_daily_quote()
 
     context = {
@@ -219,6 +191,7 @@ def edit_destination(request, destination_id):
 def delete_destination(request, destination_id):
     destination.views.delete_destination(request, destination_id)
     return redirect("dashboard")
+
 
 # ======================================================
 # ✅ PASSWORD CHANGE VIEW

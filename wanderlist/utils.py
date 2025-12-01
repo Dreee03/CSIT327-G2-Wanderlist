@@ -1,5 +1,7 @@
 from wanderlist.supabase_client import supabase
 from datetime import date
+# ✅ IMPORT CENTRAL QUOTES
+from wanderlist.quotes import QUOTES
 
 # -------------------
 # EXISTING SUPABASE CODE (UNCHANGED)
@@ -90,28 +92,16 @@ def supabase_sign_out():
 
 
 # -------------------
-# ✅ DAILY QUOTE FEATURE
+# ✅ DAILY QUOTE FEATURE (UPDATED)
 # -------------------
-
-DAILY_QUOTES = [
-    "Traveling – it leaves you speechless, then turns you into a storyteller.",
-    "The world is a book, and those who do not travel read only one page.",
-    "Adventure may hurt you but monotony will kill you.",
-    "Jobs fill your pockets, but adventures fill your soul.",
-    "Life is short and the world is wide.",
-    "Better to see something once than hear about it a thousand times.",
-    "Not all those who wander are lost.",
-    "Wherever you go becomes a part of you somehow.",
-    "Take only memories, leave only footprints.",
-    "A journey of a thousand miles begins with a single step."
-]
 
 def get_daily_quote():
     """
-    Returns one quote per day.
-    Same quote for all users for the entire day.
-    Automatically changes tomorrow.
+    Returns one quote per day using the central list.
     """
+    if not QUOTES:
+        return "Travel is the only thing you buy that makes you richer."
+        
     today = date.today()
-    index = today.toordinal() % len(DAILY_QUOTES)
-    return DAILY_QUOTES[index]
+    index = today.toordinal() % len(QUOTES)
+    return QUOTES[index]
