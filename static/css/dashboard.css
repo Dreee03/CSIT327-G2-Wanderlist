@@ -240,39 +240,60 @@ main.main-content {
   background: var(--wl-primary-50);
   color: var(--wl-primary);
   margin-top: 4px;
+  align-self: flex-start;
 }
 
+/* ✅ UPDATED: Card Actions (Centered Buttons) */
 .card-actions {
   display: flex;
-  justify-content: flex-end;
-  gap: 6px;
+  justify-content: center; /* Centers buttons horizontally */
+  align-items: center;
+  gap: 12px; /* Adds spacing between Edit and Delete */
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid #f0f0f0; /* Optional: subtle separator */
+}
+
+/* Remove default form margin so buttons align perfectly */
+.card-actions form {
+  margin: 0;
+}
+
+/* ✅ UPDATED: Edit & Delete Buttons */
+.btn-edit,
+.btn-delete {
+  font-size: 0.85rem;
+  padding: 6px 16px; /* Wider buttons */
+  border-radius: 6px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  text-decoration: none !important; /* Removes underline from <a> tag */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s, transform 0.1s;
+  min-width: 70px; /* Ensures buttons have equal minimum width */
 }
 
 .btn-edit {
-  font-size: 0.75rem;
-  padding: 4px 8px;
-  border-radius: 8px;
-  font-weight: 500;
   background-color: var(--wl-teal);
   color: #fff;
-  border: none;
-  cursor: pointer;
 }
-
-.btn-edit:hover { background-color: var(--wl-deep); }
+.btn-edit:hover { 
+  background-color: var(--wl-deep); 
+  color: #fff;
+  opacity: 0.9;
+}
 
 .btn-delete {
-  font-size: 0.75rem;
-  padding: 4px 8px;
-  border-radius: 8px;
-  font-weight: 500;
   background-color: var(--wl-danger);
   color: #fff;
-  border: none;
-  cursor: pointer;
 }
-
-.btn-delete:hover { background-color: var(--wl-danger); opacity: 0.8; }
+.btn-delete:hover { 
+  background-color: #c82333; 
+  opacity: 0.9; 
+}
 
 .no-destinations {
   text-align: center;
@@ -368,4 +389,6 @@ main.main-content {
   .destination-card { width: 160px; min-height: 200px; }
   .destination-card img.card-img,
   .no-image { height: 90px; }
+  .card-actions { flex-direction: column; gap: 8px; }
+  .btn-edit, .btn-delete { width: 100%; }
 }
