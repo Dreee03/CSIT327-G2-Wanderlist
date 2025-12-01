@@ -7,7 +7,7 @@ from django.views.static import serve
 
 # Redirect root URL to dashboard
 def home_redirect(request):
-    return redirect('dashboard')  # Redirect '/' to '/dashboard/'
+    return redirect('home')  # Redirect '/' to '/accounts/'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
