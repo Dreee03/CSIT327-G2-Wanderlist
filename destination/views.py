@@ -8,23 +8,36 @@ from wanderlist.supabase_client import supabase
 from wanderlist import settings
 import uuid 
 
+# ✅ ADDED IMPORTS
+from dashboard.models import UserProfile
+from accounts.forms import SupabaseUser
 
 def destination_list(request):
     """Display all destinations from Supabase."""
     if 'supabase_access_token' not in request.session:
         return redirect('login')
 
+    # ✅ ADDED: Fetch User and Profile
+    username = request.session.get('logged_in_username', 'User')
+    user_obj = SupabaseUser(username=username, is_authenticated=True)
+    profile, _ = UserProfile.objects.get_or_create(username=username)
+
     # Get the current user's ID
     custom_user_id = request.session.get('custom_user_id')
     try:
-        # ✅ Fetch all destinations safely
+        # Fetch all destinations safely
         resp = supabase.table('destination').select('*').eq('user_id', custom_user_id).execute()
         destinations = resp.data if resp.data else []
     except Exception as e:
         destinations = []
         messages.error(request, f"Could not fetch destinations: {e}")
 
-    context = {'destinations': destinations}
+    # ✅ UPDATED CONTEXT
+    context = {
+        'destinations': destinations,
+        'user': user_obj,
+        'profile': profile
+    }
     return render(request, 'destination.html', context)
 
 @csrf_protect
@@ -43,10 +56,7 @@ def create_destination(request):
     if 'supabase_access_token' not in request.session:
         return redirect('login')
 
-    # Get the current user's ID
     custom_user_id = request.session.get('custom_user_id')
-
-    # Allow either a direct URL or an uploaded file
 
     
     if request.method == 'POST':
@@ -72,14 +82,14 @@ def create_destination(request):
         country = (request.POST.get('country') or '').strip()
         description = (request.POST.get('description') or '').strip()
         category = (request.POST.get('category') or '').strip()
-        notes = (request.POST.get('notes') or '').strip()  # ✅ Notes field
-        user_id = custom_user_id  # Link destination to user
+        notes = (request.POST.get('notes') or '').strip()
+        user_id = custom_user_id
 
         # Date fields
         start_trip = (request.POST.get('start_trip') or '').strip()
         end_trip = (request.POST.get('end_trip') or '').strip()
         
-        # ✅ Get latitude and longitude from the form
+        # Get latitude and longitude from the form
         latitude = request.POST.get('latitude')
         longitude = request.POST.get('longitude')
         
@@ -91,7 +101,7 @@ def create_destination(request):
                 messages.error(request, 'Description must be 500 characters or fewer.')
                 return redirect('destination:list')
             
-        # ✅ Convert coordinates to float or None
+        # Convert coordinates to float or None
         try:
             latitude = float(latitude) if latitude else None
             longitude = float(longitude) if longitude else None
@@ -99,7 +109,7 @@ def create_destination(request):
             messages.error(request, 'Latitude and Longitude must be valid numbers.')
             return redirect('destination:list')
 
-        # ✅ Check for duplicates
+        # Check for duplicates
         try:
             existing = supabase.table('destination') \
                 .select('destinationID') \
@@ -116,7 +126,7 @@ def create_destination(request):
             return redirect('destination:list')
 
         data = {
-            'destination_image': destination_image or None,  # ✅ Save null if empty
+            'destination_image': destination_image or None,
             'name': name,
             'city': city,
             'country': country,
@@ -124,10 +134,10 @@ def create_destination(request):
             'end_trip': end_trip or None,
             'description': description or None,
             'category': category,
-            'latitude': latitude,   # ✅ Save latitude
-            'longitude': longitude, # ✅ Save longitude
-            'notes': notes or None,  # ✅ Save null if empty
-            'user_id': user_id  # Link destination to user
+            'latitude': latitude,
+            'longitude': longitude,
+            'notes': notes or None,
+            'user_id': user_id
         }
 
         try:
@@ -144,7 +154,6 @@ def edit_destination(request, destination_id):
     if 'supabase_access_token' not in request.session:
         return redirect('login')
 
-    # Get the current user's ID
     custom_user_id = request.session.get('custom_user_id')
     try:
         result = supabase.table('destination').select('*').eq('destinationID', destination_id).eq('user_id', custom_user_id).execute()
@@ -157,7 +166,6 @@ def edit_destination(request, destination_id):
         messages.error(request, f'❌ Error loading destination: {e}')
         return redirect(reverse('destination:list'))
 
-    # ✅ Handle update
     if request.method == 'POST':
         destination_image = (request.POST.get('destination_image') or '').strip()
         upload_file = request.FILES.get('destination_image')
@@ -165,7 +173,6 @@ def edit_destination(request, destination_id):
             try:
                 filename = os.path.basename(upload_file.name)
                 file_path = f"{custom_user_id}/{uuid.uuid4().hex}_{filename}"
-                # Read the file content and upload the bytes
                 file_content = upload_file.read()
                 supabase.storage.from_('DestinationImages').upload(file_path, file_content)
                 destination_image = f"{settings.SUPABASE_URL}/storage/v1/object/public/DestinationImages/{file_path}"
@@ -178,13 +185,11 @@ def edit_destination(request, destination_id):
         country = (request.POST.get('country') or '').strip()
         description = (request.POST.get('description') or '').strip()
         category = (request.POST.get('category') or '').strip()
-        notes = (request.POST.get('notes') or '').strip()  # ✅ Notes field
+        notes = (request.POST.get('notes') or '').strip()
 
-        #Date fields
         start_trip = (request.POST.get('start_trip') or '').strip()
         end_trip = (request.POST.get('end_trip') or '').strip()
         
-        # ✅ Get latitude and longitude
         latitude = request.POST.get('latitude')
         longitude = request.POST.get('longitude')
 
@@ -192,7 +197,6 @@ def edit_destination(request, destination_id):
             messages.error(request, "Please fill out all required fields.")
             return render(request, 'edit_destination.html', {'destination': destination})
             
-        # ✅ Convert coordinates to float or None
         try:
             latitude = float(latitude) if latitude else None
             longitude = float(longitude) if longitude else None
@@ -201,7 +205,7 @@ def edit_destination(request, destination_id):
             return render(request, 'edit_destination.html', {'destination': destination})
 
         payload = {
-            'destination_image': destination_image or None,  # ✅ Update image too
+            'destination_image': destination_image or None,
             'name': name,
             'city': city,
             'country': country,
@@ -209,9 +213,9 @@ def edit_destination(request, destination_id):
             'end_trip': end_trip or None,
             'category': category,
             'description': description,
-            'notes': notes or None,  # ✅ Update notes too
-            'latitude': latitude,   # ✅ Update latitude
-            'longitude': longitude, # ✅ Update longitude
+            'notes': notes or None,
+            'latitude': latitude,
+            'longitude': longitude,
         }
 
         try:
@@ -231,7 +235,6 @@ def delete_destination(request, destination_id):
     if 'supabase_access_token' not in request.session:
         return redirect('login')
 
-    # Get the current user's ID
     custom_user_id = request.session.get('custom_user_id')
     try:
         supabase.table('destination').delete().eq('destinationID', destination_id).eq('user_id', custom_user_id).execute()
@@ -245,5 +248,14 @@ def delete_destination(request, destination_id):
 def redirect_to_dashboard(request):
 	"""Redirect to the main dashboard page."""
 	return redirect(reverse('dashboard'))
+
 def explore(request):
-    return render(request, 'explore.html')
+    if 'supabase_access_token' not in request.session:
+        return redirect('login')
+
+    # ✅ ADDED: Fetch User and Profile for the Explore page
+    username = request.session.get('logged_in_username', 'User')
+    user_obj = SupabaseUser(username=username, is_authenticated=True)
+    profile, _ = UserProfile.objects.get_or_create(username=username)
+
+    return render(request, 'explore.html', {'user': user_obj, 'profile': profile})
