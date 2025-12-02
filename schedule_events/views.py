@@ -7,6 +7,9 @@ from wanderlist.supabase_client import supabase
 from .models import Event
 import json
 
+# ✅ ADDED IMPORTS
+from dashboard.models import UserProfile
+from accounts.forms import SupabaseUser
 
 @csrf_protect
 def calendar_view(request):
@@ -14,7 +17,12 @@ def calendar_view(request):
     if 'supabase_access_token' not in request.session:
         return redirect('login')
     
-    return render(request, 'schedule_events.html')
+    # ✅ ADDED: Fetch User and Profile
+    username = request.session.get('logged_in_username', 'User')
+    user_obj = SupabaseUser(username=username, is_authenticated=True)
+    profile, _ = UserProfile.objects.get_or_create(username=username)
+    
+    return render(request, 'schedule_events.html', {'user': user_obj, 'profile': profile})
 
 
 def get_events_json(request):
