@@ -315,12 +315,22 @@
 
 <style>
 .quote-card {
+  position: relative; /* Establishes a stacking context */
   background: linear-gradient(135deg, #4a90e2, #6dd5fa);
   color: white;
   padding: 20px;
   border-radius: 12px;
   margin-bottom: 25px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  overflow: hidden; /* Keeps the overlay inside */
+}
+
+/* ✅ CRITICAL FIX: Bring text and button above the overlay */
+.quote-card h3,
+.quote-card p,
+.quote-card button {
+  position: relative;
+  z-index: 2; /* Ensures these sit on top of the ::before overlay */
 }
 .quote-card h3 {
   margin-bottom: 10px;
