@@ -10,7 +10,6 @@
 </head>
 <body>
 
-  <!-- ✅ Navbar -->
   <header class="navbar">
     <div class="nav-left">
       <a href="#" class="logo-text">WanderList</a>
@@ -29,7 +28,6 @@
     </div>
   </header>
 
-  <!-- ✅ Flash Messages -->
   {% if messages %}
   <div class="message-container">
     {% for message in messages %}
@@ -40,10 +38,8 @@
   </div>
   {% endif %}
 
-  <!-- ✅ Main Section -->
   <main class="main-content">
 
-    <!-- ✅ DAILY QUOTE CARD (UPDATED) -->
     <div class="quote-card">
       <h3>🌟 Daily Quote</h3>
 
@@ -63,7 +59,6 @@
       </div>
     </div>
 
-    <!-- Search + Filter Bar -->
     <div class="search-filter-bar" style="display:flex; gap:10px; align-items:center; margin-bottom:20px; flex-wrap: wrap;">
       <input 
         type="text" 
@@ -84,10 +79,8 @@
 
       <select id="sortSelect" style="padding:12px 15px; border-radius:8px; border:1px solid #ccc; font-size:16px;">
         <option value="">Sort (None)</option>
-        <!-- Date Sorting -->
         <option value="date_desc">Date Added (Newest first)</option>
         <option value="date_asc">Date Added (Oldest first)</option>
-        <!-- Name Sorting -->
         <option value="name_asc">Alphabetical (A–Z)</option>
         <option value="name_desc">Alphabetical (Z–A)</option>
       </select>
@@ -100,7 +93,6 @@
       </button>
     </div>
 
-    <!-- Category Filters -->
     <div class="filters">
       <button class="filter-btn active" data-filter="all">All</button>
       <button class="filter-btn" data-filter="planned">Planned</button>
@@ -108,7 +100,6 @@
       <button class="filter-btn" data-filter="dreaming">Dreaming</button>
     </div>
 
-    <!-- Destination Cards -->
     <div class="destination-grid">
       {% for destination in destinations %}
       <div class="destination-card" data-category="{{ destination.category|lower }}" data-created="{{ destination.created_at|default:'' }}" data-inserted="{{ destination.inserted_at|default:'' }}">
@@ -131,7 +122,6 @@
             <p class="card-description">{{ destination.description|truncatechars:100 }}</p>
           {% endif %}
 
-          <!-- Notes Section -->
           <div class="card-notes" style="margin-top:10px; background:#f9f9f9; padding:10px; border-radius:8px;">
             <strong>📝 Notes:</strong>
             {% if destination.notes %}
@@ -161,7 +151,6 @@
 
   </main>
 
-  <!-- JS -->
   <script>
   document.addEventListener("DOMContentLoaded", () => {
 
@@ -181,13 +170,14 @@
       quoteText.innerText = quote;
     }
 
-    // ✅ FIXED: Connect to Django backend instead of using a fake local array
+    // ✅ FIXED: Connect to Django backend with CACHE BUSTING
     newQuoteBtn.addEventListener("click", () => {
       // 1. Disable the button to prevent double-clicking
       newQuoteBtn.disabled = true;
 
       // 2. Make a real request to your 'refresh_quote' view
-      fetch("{% url 'refresh_quote' %}")
+      // We append ?v=TIMESTAMP to force the browser to ignore its cache
+      fetch("{% url 'refresh_quote' %}?v=" + Date.now())
         .then(response => {
           if (!response.ok) {
             throw new Error('Network response was not ok');
@@ -323,7 +313,6 @@
   });
   </script>
 
-<!-- CSS -->
 <style>
 .quote-card {
   background: linear-gradient(135deg, #4a90e2, #6dd5fa);
