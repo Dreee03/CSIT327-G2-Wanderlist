@@ -147,6 +147,10 @@
       {% empty %}
         <p class="no-destinations">No destinations added yet.</p>
       {% endfor %}
+
+      <p id="no-search-results" style="display:none; width:100%; text-align:center; color:#666; font-size:1.1rem; margin-top:20px;">
+        No results found.
+      </p>
     </div>
 
   </main>
@@ -155,28 +159,23 @@
   document.addEventListener("DOMContentLoaded", () => {
 
     /* ===============================
-          DAILY QUOTE SYSTEM (CONNECTED TO BACKEND)
+          DAILY QUOTE SYSTEM
     =============================== */
 
     const quoteText = document.getElementById("dailyQuote");
     const errorText = document.getElementById("quoteError");
     const newQuoteBtn = document.getElementById("newQuoteBtn");
 
-    // Helper function to update the UI with animation
     function displayQuote(quote) {
       quoteText.classList.remove("fade");
-      void quoteText.offsetWidth; // Trigger reflow to restart animation
+      void quoteText.offsetWidth; 
       quoteText.classList.add("fade");
       quoteText.innerText = quote;
     }
 
-    // ✅ FIXED: Connect to Django backend with CACHE BUSTING
     newQuoteBtn.addEventListener("click", () => {
-      // 1. Disable the button to prevent double-clicking
       newQuoteBtn.disabled = true;
-
-      // 2. Make a real request to your 'refresh_quote' view
-      // We append ?v=TIMESTAMP to force the browser to ignore its cache
+      // Cache busting included
       fetch("{% url 'refresh_quote' %}?v=" + Date.now())
         .then(response => {
           if (!response.ok) {
@@ -198,26 +197,26 @@
           errorText.innerText = "Failed to fetch a new quote.";
         })
         .finally(() => {
-          // 3. Re-enable the button
           newQuoteBtn.disabled = false;
         });
     });
 
-    // ✅ INITIAL LOAD: Use the quote passed by Django (dashboard/views.py)
-    // This ensures the "Daily Quote" is consistent with the server
     const initialQuote = "{{ quote|escapejs }}";
     if (initialQuote) {
       quoteText.innerText = initialQuote;
     }
 
     /* ===============================
-       SEARCH + FILTER (UNCHANGED)
+       SEARCH + FILTER + NO RESULT LOGIC
     =============================== */
 
     const filterButtons = document.querySelectorAll(".filter-btn");
     const cards = document.querySelectorAll(".destination-card");
     const searchInput = document.getElementById("searchInput");
     const categoryFilter = document.getElementById("categoryFilter");
+    
+    // ✅ Select the No Results message
+    const noResultsMsg = document.getElementById("no-search-results");
 
     function filterDestinations() {
       const searchValue = searchInput.value.toLowerCase();
@@ -225,17 +224,29 @@
       const activeButton = document.querySelector(".filter-btn.active");
       const buttonCategory = activeButton ? activeButton.dataset.filter : "all";
 
+      let visibleCount = 0; // ✅ Counter for visible items
+
       cards.forEach(card => {
         const name = card.querySelector(".card-title").textContent.toLowerCase();
         const category = card.dataset.category.toLowerCase();
 
-        const matchesName = searchValue === "" || name.startsWith(searchValue);
+        const matchesName = searchValue === "" || name.includes(searchValue);
         const matchesCategory =
           (selectedCategory === "" || category === selectedCategory) &&
           (buttonCategory === "all" || category === buttonCategory);
 
-        card.style.display = matchesName && matchesCategory ? "block" : "none";
+        if (matchesName && matchesCategory) {
+          card.style.display = ""; // ✅ Reset display to default (flex/block)
+          visibleCount++; // ✅ Increment count
+        } else {
+          card.style.display = "none";
+        }
       });
+
+      // ✅ Toggle No Results Message
+      if (noResultsMsg) {
+        noResultsMsg.style.display = visibleCount === 0 ? "block" : "none";
+      }
     }
 
     filterButtons.forEach(button => {
@@ -256,19 +267,12 @@
     const sortSelect = document.getElementById("sortSelect");
     const destinationGrid = document.querySelector(".destination-grid");
 
-    // Helper function to convert ISO timestamp to timestamp
     function getTimestamp(card) {
       const created = card.dataset.created;
       const inserted = card.dataset.inserted;
       const dateString = created || inserted || null;
-      
       if (!dateString) return 0;
-      
-      try {
-        return new Date(dateString).getTime();
-      } catch (e) {
-        return 0;
-      }
+      try { return new Date(dateString).getTime(); } catch (e) { return 0; }
     }
 
     function sortDestinations() {
@@ -277,22 +281,14 @@
 
       visibleCards.sort((a, b) => {
         if (sortValue === "date_desc") {
-          // Newest first
-          const dateA = getTimestamp(a);
-          const dateB = getTimestamp(b);
-          return dateB - dateA;
+          return getTimestamp(b) - getTimestamp(a);
         } else if (sortValue === "date_asc") {
-          // Oldest first
-          const dateA = getTimestamp(a);
-          const dateB = getTimestamp(b);
-          return dateA - dateB;
+          return getTimestamp(a) - getTimestamp(b);
         } else if (sortValue === "name_asc") {
-          // A-Z
           const nameA = a.querySelector(".card-title").textContent.toLowerCase();
           const nameB = b.querySelector(".card-title").textContent.toLowerCase();
           return nameA.localeCompare(nameB);
         } else if (sortValue === "name_desc") {
-          // Z-A
           const nameA = a.querySelector(".card-title").textContent.toLowerCase();
           const nameB = b.querySelector(".card-title").textContent.toLowerCase();
           return nameB.localeCompare(nameA);
@@ -300,7 +296,6 @@
         return 0;
       });
 
-      // Re-append sorted cards to the grid
       visibleCards.forEach(card => {
         destinationGrid.appendChild(card);
       });
@@ -314,24 +309,26 @@
   </script>
 
 <style>
+/* ✅ FIXED: Added positioning and z-index to fix unclickable button issue */
 .quote-card {
-  position: relative; /* Establishes a stacking context */
+  position: relative; /* Create stacking context */
   background: linear-gradient(135deg, #4a90e2, #6dd5fa);
   color: white;
   padding: 20px;
   border-radius: 12px;
   margin-bottom: 25px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-  overflow: hidden; /* Keeps the overlay inside */
+  overflow: hidden; /* Ensure gradient/overlay stays inside */
 }
 
-/* ✅ CRITICAL FIX: Bring text and button above the overlay */
+/* Ensure content sits above any potential ::before overlays from dashboard.css */
 .quote-card h3,
 .quote-card p,
 .quote-card button {
   position: relative;
-  z-index: 2; /* Ensures these sit on top of the ::before overlay */
+  z-index: 2; 
 }
+
 .quote-card h3 {
   margin-bottom: 10px;
 }
